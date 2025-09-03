@@ -1,0 +1,18 @@
+
+# White listing
+*
+!basic_games/
+basic_games/*
+!basic_games/games/
+basic_games/games/*
+!basic_games/games/game_dao.py
+!basic_games/games/dao_game/
+!basic_games/games/dao_game/*.*
+!dao_plugins/
+!dao_plugins/*.*
+!dao_tools/
+!dao_tools/*
+!.gitignore
+!LICENSE
+!pyproject.toml
+!README.md
