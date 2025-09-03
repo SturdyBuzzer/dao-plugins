@@ -10,7 +10,7 @@ SET VERSION=0.1.0
 ECHO:
 ECHO Building DAO_Support_Plugin:
 
-IF EXIST %ARCHIVE% (
+IF EXIST "%ARCHIVE%" (
     ECHO:
     ECHO Removing previous archive.
     RMDIR /S /Q "%ARCHIVE%"
@@ -23,27 +23,27 @@ MKDIR "%ARCHIVE%\dao_plugins"
 
 ECHO:
 ECHO Copying Game DAO plugin files.
-COPY /Y basic_games\games\game_dao.py %ARCHIVE%\basic_games\games\game_dao.py >NUL
-COPY /Y basic_games\games\dao_game\__init__.py %ARCHIVE%\basic_games\games\dao_game\__init__.py >NUL
-COPY /Y basic_games\games\dao_game\DAOChargen.py %ARCHIVE%\basic_games\games\dao_game\DAOChargen.py >NUL
-COPY /Y basic_games\games\dao_game\DAOModDataChecker.py %ARCHIVE%\basic_games\games\dao_game\DAOModDataChecker.py >NUL
-COPY /Y basic_games\games\dao_game\DAOLaunch.py %ARCHIVE%\basic_games\games\dao_game\DAOLaunch.py >NUL
-COPY /Y basic_games\games\dao_game\DAOInstall.py %ARCHIVE%\basic_games\games\dao_game\DAOInstall.py >NUL
-COPY /Y basic_games\games\dao_game\DAOUtils.py %ARCHIVE%\basic_games\games\dao_game\DAOUtils.py >NUL
+COPY /Y "%HOME%\basic_games\games\game_dao.py" "%ARCHIVE%\basic_games\games\game_dao.py"
+COPY /Y "%HOME%\basic_games\games\dao_game\__init__.py" "%ARCHIVE%\basic_games\games\dao_game\__init__.py"
+COPY /Y "%HOME%\basic_games\games\dao_game\DAOChargen.py" "%ARCHIVE%\basic_games\games\dao_game\DAOChargen.py"
+COPY /Y "%HOME%\basic_games\games\dao_game\DAOModDataChecker.py" "%ARCHIVE%\basic_games\games\dao_game\DAOModDataChecker.py"
+COPY /Y "%HOME%\basic_games\games\dao_game\DAOLaunch.py" "%ARCHIVE%\basic_games\games\dao_game\DAOLaunch.py"
+COPY /Y "%HOME%\basic_games\games\dao_game\DAOInstall.py" "%ARCHIVE%\basic_games\games\dao_game\DAOInstall.py"
+COPY /Y "%HOME%\basic_games\games\dao_game\DAOUtils.py" "%ARCHIVE%\basic_games\games\dao_game\DAOUtils.py"
 
 ECHO:
 ECHO Copying DAO Tools plugin files.
-COPY /Y dao_plugins\__init__.py %ARCHIVE%\dao_plugins\__init__.py >NUL
-COPY /Y dao_plugins\dao_conflict_checker.py %ARCHIVE%\dao_plugins\dao_conflict_checker.py >NUL
-COPY /Y dao_plugins\dao_dlc_data.xml %ARCHIVE%\dao_plugins\dao_dlc_data.xml >NUL
-COPY /Y dao_plugins\dao_dlc_manager.py %ARCHIVE%\dao_plugins\dao_dlc_manager.py >NUL
-COPY /Y dao_plugins\dao_utils.py %ARCHIVE%\dao_plugins\dao_utils.py >NUL
-COPY /Y dao_plugins\dao.ico %ARCHIVE%\dao_plugins\dao.ico >NUL
+COPY /Y "%HOME%\dao_plugins\__init__.py" "%ARCHIVE%\dao_plugins\__init__.py"
+COPY /Y "%HOME%\dao_plugins\dao_conflict_checker.py" "%ARCHIVE%\dao_plugins\dao_conflict_checker.py"
+COPY /Y "%HOME%\dao_plugins\dao_dlc_data.xml" "%ARCHIVE%\dao_plugins\dao_dlc_data.xml"
+COPY /Y "%HOME%\dao_plugins\dao_dlc_manager.py" "%ARCHIVE%\dao_plugins\dao_dlc_manager.py"
+COPY /Y "%HOME%\dao_plugins\dao_utils.py" "%ARCHIVE%\dao_plugins\dao_utils.py"
+COPY /Y "%HOME%\dao_plugins\dao.ico" "%ARCHIVE%\dao_plugins\dao.ico"
 
 ECHO:
 ECHO Building zip archive.
 MKDIR "%RELEASE%" 2>NUL
-tar -a -c -f "%RELEASE%\ModOrganizer-DAO-Plugins.%VERSION%.zip" -C "%ARCHIVE%" .
+tar -a -c -f "%RELEASE%\ModOrganizer-DAO-Plugins.%VERSION%.zip" -C "%ARCHIVE%" basic_games dao_plugins
 
 ECHO:
 ECHO Done. DAO_Support_Plugin built.
