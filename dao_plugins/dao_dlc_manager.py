@@ -36,7 +36,7 @@ class DAODLCManager(mobase.IPluginTool):
         "Convert DLC to MO2 managed mods.<br>"
     )
     VERSION = "1.0.0"
-    SUPPORTURL = ""
+    SUPPORTURL = "https://www.nexusmods.com/dragonage/mods/6725"
 
     ##################################
     ## IPluginTool Method Overrides ##

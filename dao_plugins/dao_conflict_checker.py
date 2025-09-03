@@ -25,7 +25,7 @@ class DAOConflictChecker(mobase.IPluginTool):
         "Detects conflicts in Dragon Age: Origins packages/core/override directory.<br>"
     )
     VERSION = "1.0.0"
-    SUPPORTURL = ""
+    SUPPORTURL = "https://www.nexusmods.com/dragonage/mods/6725"
 
     ##################################
     ## IPluginTool Method Overrides ##

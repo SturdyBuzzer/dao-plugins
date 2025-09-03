@@ -28,7 +28,7 @@ class DAOriginsGame(BasicGame):
     GameGogId = 1949616134
     GameEaDesktopId = [70377, 70843]
     GameSupportURL = (
-        r"https://github.com/ModOrganizer2/modorganizer-basic_games/wiki/"
+        r"https://www.nexusmods.com/dragonage/mods/6725"
         "Game:-Dragon-Age:-Origins"
     )
 
