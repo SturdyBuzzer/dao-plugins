@@ -2,6 +2,7 @@ import mobase
 import os
 import re
 import shutil
+import struct
 import xml.dom.minidom
 import zipfile
 
@@ -335,6 +336,41 @@ class DAOUtils:
     #################
     ## Misc. Utils ##
     #################
+    @staticmethod
+    def decode_bytes(data: bytes, encoding: str) -> str:
+        """Decode a fixed-length byte string, trimming trailing nulls."""
+        s = data.decode(encoding, errors="ignore")
+        return s.rstrip("\0")
+
+    @staticmethod
+    def get_erf_paths(name: str, file_path: str) -> list[str]:
+        """List files inside a DAO .erf archive."""
+        file_list: list[str] = []
+        try:
+            with open(file_path, "rb") as f:
+                # Header1 0-16
+                hdr1 = f.read(16)
+                file_type = DAOUtils.decode_bytes(hdr1[0:8], "utf-16le")
+                version = DAOUtils.decode_bytes(hdr1[8:16], "utf-16le")
+                if file_type != "ERF " or version not in ("V2.0", "V2.2"):
+                    DAOUtils.log_message(f"ERF version not supported {file_type} {version}")
+                    f.close()
+                    return file_list
+                # Header2 16-32 
+                hdr2 = f.read(16)
+                file_count, _, _, _ = struct.unpack("<4I", hdr2)
+                # File List
+                for _ in range(file_count):
+                    entry_size = 76 if version == "V2.2" else 72
+                    entry_data = f.read(entry_size)
+                    name = DAOUtils.decode_bytes(entry_data[0:64], "utf-16le")
+                    if not name:
+                        continue
+                    file_list.append(name)
+        except Exception as e:
+            DAOUtils.log_message(f"Failed to read ERF file {file_path}: {e}")
+        return file_list 
+    
     @staticmethod
     def show_message_box(
         header: str,

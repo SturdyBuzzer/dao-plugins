@@ -3,8 +3,8 @@ import mobase
 from PyQt6.QtCore import QCoreApplication, QPoint, Qt
 from PyQt6.QtGui import QAction, QColor, QIcon
 from PyQt6.QtWidgets import( 
-    QDialog, QDialogButtonBox, QMenu,
-    QScrollArea, QSizePolicy, QTreeWidget,
+    QApplication, QDialog, QDialogButtonBox, 
+    QMenu, QScrollArea, QSizePolicy, QTreeWidget,
     QTreeWidgetItem, QVBoxLayout, QWidget,
 )
 
@@ -199,7 +199,7 @@ class DAOConflictChecker(mobase.IPluginTool):
         """Checks file paths for conflicts and adds to display tree"""
         tree = self._tree
         tree.clear()
-        full_path = self._get_setting("show_full_paths")
+        show_full_paths = self._get_setting("show_full_paths")
         conflict_dict = self._scan_override_dir()
         for file, paths in conflict_dict.items():
             if len(paths) <= 1:
@@ -211,8 +211,14 @@ class DAOConflictChecker(mobase.IPluginTool):
             paths.sort(key=DAOUtils.natural_sort_key)
             for i, path in enumerate(paths):
                 symbol = "+" if i == len(paths) - 1 else "-"
-                path = self._organizer.resolvePath(f"packages/core/override/{path}").casefold() if bool(full_path) else path
-                child = QTreeWidgetItem(["", f"{symbol} {path}"])
+                if path.find(".erf") < 0:
+                    res_path = path
+                    erf = ""
+                else:
+                    res_path, file = path.rsplit(" -> ", 1)
+                    erf = f" -> {file}" if bool(show_full_paths) else ""
+                path = self._organizer.resolvePath(f"packages/core/override/{res_path}").casefold() if bool(show_full_paths) else path
+                child = QTreeWidgetItem(["", f"{symbol} {path}{erf}"])
                 color = QColor("green") if symbol == "+" else QColor("red")
                 child.setForeground(1, color)
                 parent.addChild(child)
@@ -232,22 +238,38 @@ class DAOConflictChecker(mobase.IPluginTool):
         for entry in DAOUtils.walk_tree(ovrd_tree):
             if entry.isDir():
                 continue
-            full_path = entry.pathFrom(ovrd_tree, '/').casefold()
+            rel_path = entry.pathFrom(ovrd_tree, '/').casefold()
             name = entry.name().casefold()
-            file_dict.setdefault(name, []).append(full_path)
-        
+            if not name.endswith(".erf"):
+                file_dict.setdefault(name, []).append(rel_path)
+                continue
+            file_path = self._organizer.resolvePath(f"{ovrd_path}/{rel_path}")
+            erf_list = DAOUtils.get_erf_paths(name, file_path)
+            for name in erf_list:
+                path = f"{rel_path } -> {name.casefold()}"
+                file_dict.setdefault(name, []).append(path)
         return dict(sorted(file_dict.items()))
     
     def _set_context_menu(self, point: QPoint):
         """Add right-click menu options"""
         menu = QMenu(self._tree)
+        copy_action = QAction("Copy Path")
         expand_action = QAction("Expand All")
         collapse_action = QAction("Collapse All")
         refresh_action = QAction("Refresh")
         paths_action = QAction("Toggle Full Paths")
-        menu.addActions([expand_action, collapse_action, refresh_action, paths_action])
+        menu.addActions([copy_action, expand_action, collapse_action, refresh_action, paths_action])
         action = menu.exec(self._tree.mapToGlobal(point))
-        if action == expand_action:
+        if action == copy_action:
+            item = self._tree.itemAt(point)
+            if item is None:
+                return
+            path = item.text(1)[2:].rsplit(" -> ", 1)[0]
+            clipboard = QApplication.clipboard()
+            if path and clipboard is not None:
+                DAOUtils.log_message(f"Copy to clipboard: {path}")
+                clipboard.setText(path)
+        elif action == expand_action:
             self._tree.expandAll()
         elif action == collapse_action:
             self._tree.collapseAll()
