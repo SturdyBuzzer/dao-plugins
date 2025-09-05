@@ -19,6 +19,7 @@ jobs:
         run: |
           VERSION=$(cat VERSION)
           echo "version=$VERSION" >> $GITHUB_ENV
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Run packaging script
         run: |
@@ -28,8 +29,11 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: dao-plugins
+          name: dao-plugins-${{ steps.get_version.outputs.version }}
           path: dao_release/*.zip
+
+    outputs:
+      version: ${{ steps.get_version.outputs.version }}
 
   release:
     runs-on: ubuntu-latest
@@ -39,22 +43,22 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
-          name: ModOrganizer-DAO-Plugins.v${{ env.version }}"
+          name: dao-plugins-${{ needs.build.outputs.version }}
           path: ./release
 
       - name: Read changelog
         id: get_changelog
         run: |
-          VERSION=${{ env.version }}
-          # Extract section from CHANGELOG.md for this version
+          VERSION=${{ needs.build.outputs.version }}
+          # Extract changelog section for this version
           awk "/^## v$VERSION/{flag=1;next}/^## /{flag=0}flag" CHANGELOG.md > body.md
           echo "bodyfile=body.md" >> $GITHUB_ENV
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ env.version }}
-          name: "ModOrganizer-DAO-Plugins v${{ env.version }}"
+          tag_name: v${{ needs.build.outputs.version }}
+          name: "ModOrganizer-DAO-Plugins v${{ needs.build.outputs.version }}"
           body_path: ${{ env.bodyfile }}
           files: ./release/*.zip
         env:
