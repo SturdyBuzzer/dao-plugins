@@ -12,7 +12,12 @@ basic_games/games/*
 !dao_plugins/*.*
 !dao_tools/
 !dao_tools/*
+!.github/
+!.github/workflows/
+!.github/workflows/*.*
 !.gitignore
-!LICENSE
 !pyproject.toml
+!CHANGELOG.md
+!LICENSE
 !README.md
+!VERSION

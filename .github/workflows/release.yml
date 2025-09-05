@@ -1,0 +1,61 @@
+name: Build and Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Read version
+        id: get_version
+        shell: bash
+        run: |
+          VERSION=$(cat VERSION)
+          echo "version=$VERSION" >> $GITHUB_ENV
+
+      - name: Run packaging script
+        run: |
+          cd dao_tools
+          .\DEPLOY.BAT
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dao-plugins
+          path: dao_release/*.zip
+
+  release:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: ModOrganizer-DAO-Plugins.v${{ env.version }}"
+          path: ./release
+
+      - name: Read changelog
+        id: get_changelog
+        run: |
+          VERSION=${{ env.version }}
+          # Extract section from CHANGELOG.md for this version
+          awk "/^## v$VERSION/{flag=1;next}/^## /{flag=0}flag" CHANGELOG.md > body.md
+          echo "bodyfile=body.md" >> $GITHUB_ENV
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ env.version }}
+          name: "ModOrganizer-DAO-Plugins v${{ env.version }}"
+          body_path: ${{ env.bodyfile }}
+          files: ./release/*.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
