@@ -5,7 +5,7 @@ SET HOME=%~dp0..
 SET ARCHIVE=%HOME%\dao_archive
 SET RELEASE=%HOME%\dao_release
 
-SET VERSION=0.1.0
+SET /P VERSION=<"%HOME%\VERSION"
 
 ECHO:
 ECHO Building DAO_Support_Plugin:
