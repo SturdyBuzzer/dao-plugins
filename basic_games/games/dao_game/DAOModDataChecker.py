@@ -50,6 +50,8 @@ class DAOModDataChecker(mobase.ModDataChecker):
             if entry.isDir():
                 continue
             name = entry.name().casefold()
+            if name == "meta.ini":
+                continue
             path = entry.pathFrom(filetree, '/').casefold()
             suffix = entry.suffix().casefold()
             if suffix == "mo2unpack":
