@@ -27,11 +27,8 @@ class DAOriginsGame(BasicGame):
     GameSteamId = [17450, 47810]
     GameGogId = 1949616134
     GameEaDesktopId = [70377, 70843]
-    GameSupportURL = (
-        r"https://www.nexusmods.com/dragonage/mods/6725"
-        "Game:-Dragon-Age:-Origins"
-    )
-
+    GameSupportURL = "https://www.nexusmods.com/dragonage/mods/6725"
+    
     def init(self, organizer: mobase.IOrganizer):
         super().init(organizer)
 
