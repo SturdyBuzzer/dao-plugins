@@ -1,5 +1,10 @@
 # Changelog
 
+
+## v0.2.1
+**Adhoc/readme**
+- Update to the README.md
+
 ## v0.2.0
 **feature/get_erf_paths**
 - DAO Conflict Checker now parses ERF archive files for conflicts  

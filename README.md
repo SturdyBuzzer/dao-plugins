@@ -4,106 +4,159 @@
 
 ---
 
-## Features
+# DAO Mod Organizer 2 Plugins
 
-### 🔁 Full Virtualization of `Documents\BioWare\Dragon Age`
+## Table of Contents
 
-- Virtualizes the *full* DAO user folder — not just `packages/core/override`.
-- Allows overriding **any** file `Settings`, `AddIns`, `Offers`, etc.
-- Makes full use of Mod Organizer's VFS for mod priority and conflict detection.
-
----
-
-### DAO Binary Launch Support
-
-- Supports launching all official binaries from MO2:
-  - `DAOriginsLauncher.exe`
-  - `DAOriginsConfig.exe`
-  - `DAUpdater.exe`, etc.
+1. [Main Features](#main-features)
+2. [Extra Tools](#extra-tools)
+3. [Installation](#installation)
 
 ---
 
-### 🧩 Seamless Mod Installation
+## Main Features
 
-- Automatically detects `.dazip` and `.override` packages downloaded from Nexus Mods.
-- Installation support includes:
-  - `.dazip` packages
-  - [DAO-Modmanager](https://www.nexusmods.com/dragonage/mods/277) `.override` packages support.
-  - (Including support for  `OverrideConfig.xml` install scripts).
-- Auto-sorting and mangement for `Docs`, `Binaries`, etc.
+### Full Virtualization of the Dragon Age User Folder
+
+* The *entire* **DAO** user folder at
+  `%UserProfile%\Documents\Bioware\Dragon Age` is now included in MO2’s virtualization.
+* Previously this was limited to `packages\core\override`.
+* Now **any** file (Settings, AddIns, Offers, etc.) can be overridden.
+* Makes full use of Mod Organizer’s mod priority and conflict detection systems.
+
+### Full Install Support for DAO Mod Types
+
+* Automatically detects and installs **.dazip** packages.
+* Supports **.override** packages (the ones built from [DAO-Modmanager](https://www.nexusmods.com/dragonage/mods/277)).
+* Triggers any `OverrideConfig.xml` install scripts included with `.override` packages.
+* Auto-sorting and management for Overrides, Docs, Binaries, etc.
+
+### Dynamic `Addins.xml` and `Offers.xml` Generation
+
+*(Settings → Plugins → Dragon Age Origins Support Plugin → `build_addins_offers_xml`)*
+
+* On **game launch**, the plugin detects all installed **DLC** and `.dazip` mods currently active.
+* Generates new `Addins.xml` and `Offers.xml` files in the MO2 `%BASE_DIR%/Overwrite` directory.
+* Files are fully removed when the game stops.
+* Original files in the user directory remain untouched.
+* No more worrying about mods and DLC not being loaded into the game!
+
+### Dynamic `Chargenmorphcfg.xml` Generation
+
+*(Settings → Plugins → Dragon Age Origins Support Plugin → `build_chargenmorphcfg_xml`)*
+
+* On **game launch**, detects all installed cosmetic/chargen mods (Hair, Eyes, Beard, etc.).
+* Generates a new `Chargenmorphcfg.xml` in the MO2 `%BASE_DIR%/Overwrite` directory.
+* Competing `Chargenmorphcfg.xml` files are temporarily hidden.
+* Restored when the game stops.
+* No more manual consolidation of chargenmorph files!
+* Ensures all cosmetic mods show up in character creation.
+
+### Auto-Deploy Mod Added Binaries/Executables
+
+*(Settings → Plugins → Dragon Age Origins Support Plugin → `deploy_bin_ship`)*
+
+* `bin_ship` is now a special sub-folder in your mods.
+* On launch, the plugin deploys any files in `%Mods_Path%\<mod name>\bin_ship` into the game’s `%GAME_DIR%\bin_ship`.
+* Useful for DXVK, DAFix, script extenders, etc.
+* Restores the `bin_ship` directory when the game stops.
+
+### Configurable Override Modes
+
+*(Settings → Plugins → Dragon Age Origins Support Plugin → `flatten_override`)*
+
+1. **Flatten Override (default):**
+
+   * Auto flattens all sub-directories in `packages\core\override`.
+   * Select your desired override files at the install mods dialog then click "ok" to auto-flatten.
+   * Enables full conflict detection and priority handling via MO2.
+
+2. **Old-school:**
+
+   * Keeps `packages\core\override` directory structure intact.
+   * Manual conflict resolution by alphabetical order (e.g., `zzz_myFavoritemod...`).
+   * For those who like it the *old fashioned* way.
+
+### Save Game Management
+
+* Extends MO2’s **profile-local save games** to DAO saves.
+* View DAO savegame metadata in MO2’s Saves tab.
 
 ---
 
-### Supports mod added binaries.
+## Extra Tools
 
-- Deploys mod added binaries, script extenders, etc. to DAO *bin_ship* directory on game start.
-- Restores game bin_ship directory to previous state when game stops.
+*(Accessible from MO2’s **Tools** drop-down → puzzle piece icon)*
 
----
+### DAODLCManager
 
-### ⚙️ Configurable Override Modes
-
-**Two override strategies:**
-
-1. **Flattened (default)**  
-   - Flattens all subdirectories into `packages/core/override`.
-   - Enables full conflict detection and priority handling in MO2.
-
-2. **Old-school**  
-   - Keeps override directory structure intact.
-   - Allows for manual conflict resolution by alphabetical order (zzz_myFavoritemods...).
-
----
-
-### Dynamic Configuration File Generation
-
-- **Addins.xml** and **Offers.xml** are dynamically generated at runtime based on enabled mods and DLC.
-- No more broken installs or missing DLC!
-- **Chargenmorphcfg.xml** is also auto-generated at runtime based on detected cosmetic mods.
-- No need to manually merge chargenmorph files again.
-
----
-
-### ✅ Save game management
-
-- Extends MO2s local, profile-specific, save games feature to DAO saves.
-- View game save data via MO2 UI.
-
----
-
-### Stock Game Compatibility
-
-- Compatible with [Stock Game Method](https://wiki.wabbajack.org/modlist_author_documentation/Keeping%20the%20Game%20Folder%20clean.html#stock-game) for Wabbajack-style modlists.
-
----
-
-## 🛠 Tools
-
-### 🔧 `DAODLCManager`
+*(Tools → Dragon Age: Origins – DLC Manager)*
 
 1. **Download and Install Official DLC**
-   - Detects missing DLC automatically.
-   - Handles downloading and installs with correct metadata generation.
+
+   * Detects currently installed DLC.
+   * Lets you select, download, and install official DAO DLC.
+   * Handles downloading, validation, and installation with proper metadata.
+   * Archives stored in `%BASE_DIR%\plugins\dao_plugins\dlc_archive`.
+   * Configurable option to delete archives after install.
+     *(Settings → Plugins → Dragon Age: Origins – DLC Manager → `delete_archives`)*
 
 2. **Manage DLC Install Location**
-   - Choose where to store DLC files.
-   - Convert DLC to standalone MO2 mods for better control.
-   - Enable/disable DLC like any other mod.
+
+   * Choose where to store DLC files:
+
+     * Game Directory
+     * Data Directory (`%UserProfile%\Documents\Bioware\Dragon Age`)
+     * Mods Directory
+   * Selecting *Mods Directory* converts DLC into standalone MO2 mods for more control.
+   * Enable/disable DLC like any other MO2 mod.
+   * Easily revertible back to Game/Data directories.
 
 3. **Fix DLC Item Transfer to Awakening**
-   - Patches DLC items to appear in Awakening expansion.
-   - *Note: Makes items available, does not guarantee items behave correctly.*
+
+   * Patches DLC items so they appear in the Awakening expansion.
+   * Scans installed DLC and extracts only required files.
+   * Creates a toggleable MO2 mod for the patch.
+   * *Note: Items may require further modding for proper behavior.*
 
 ---
 
-### `DAOConflictChecker`
+### DAOConflictChecker
 
-- Scans the VFS override directory for filename conflicts.
-- Persists results in a **separate window** for reference while editing MO2 load order.
-- Context menu allows:
-  - Expand/Collapse all
-  - Refresh view
-- Optionally shows full paths or paths relative to `packages/core/override`.
+*(Tools → Dragon Age: Origins – Conflict Checker)*
+
+* Scans MO2’s virtual `packages\core\override` directory for file-name conflicts.
+* Also checks inside Bioware’s `.erf` archives.
+* Displays results in a **separate window** for reference while adjusting load order.
+* Auto-refreshes after changes for **real-time conflict resolution**.
+* Options to show full or relative paths.
+* Paths can be copied to clipboard.
+* Customizable font size.
+  *(Settings → Plugins → Dragon Age: Origins – Conflict Checker → `font_point_size`)*
+* Context menu options:
+
+  * Copy Path
+  * Expand All
+  * Collapse All
+  * Refresh View
+  * Toggle Full Paths
+
+---
+
+## Installation
+
+1. Install **Dragon Age: Origins**
+
+   * Follow [Step 00 and Step 01](https://www.nexusmods.com/dragonage/mods/5610).
+2. Run the game once to create the `%UserProfile%\Documents\Bioware\Dragon Age` directory.
+3. Download the latest [Mod Organizer 2](https://github.com/ModOrganizer2/modorganizer/releases) (e.g. `Mod.Organizer-2.5.2.7z`) and extract it.
+4. Download the latest **DAO Mod Organizer 2 Plugins** (from Nexus or [GitHub releases](https://github.com/SturdyBuzzer/dao-plugins/releases)).
+5. Extract the `.zip` into your MO2 `%BASE_DIR%/plugins` directory.
+
+   * *Optional:* create a `game` directory inside `%BASE_DIR%` and copy your DAO install files there.
+     (See [Wabbajack docs](https://wiki.wabbajack.org/modlist_author_documentation/Keeping%20the%20Game%20Folder%20clean.html#stock-game) for more info.)
+6. Start `ModOrganizer.exe` and create a portable instance.
+7. Point the instance to your **Dragon Age: Origins** install directory (where `DAOriginsLauncher.exe` is located).
 
 ---
 
