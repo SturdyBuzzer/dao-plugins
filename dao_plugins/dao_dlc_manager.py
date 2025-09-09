@@ -347,11 +347,10 @@ class DAODLCManager(mobase.IPluginTool):
                 for path in paths:
                     file_path = DAOUtils.os_path(dir,path)
                     if not os.path.exists(file_path):
-                        ## TEMP FIX >>
+                        ## TEMP >>
                         if path.casefold().endswith("manifest.xml"):
-                            
-                            continue
-                        ## TEMP FIX ^^ 
+                            DAOUtils.log_message(f"Missing Manifest.xml -> {path}")                            
+                        ## TEMP ^^ 
                         missing = True
                         continue
                     found = True
