@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.2.2
+**Adhoc/tempfix**
+- Temp fix until I add feature to generate missing manifest.xml
 
 ## v0.2.1
 **Adhoc/readme**
