@@ -30,6 +30,8 @@ COPY /Y "%HOME%\basic_games\games\dao_game\DAOModDataChecker.py" "%ARCHIVE%\basi
 COPY /Y "%HOME%\basic_games\games\dao_game\DAOLaunch.py" "%ARCHIVE%\basic_games\games\dao_game\DAOLaunch.py"
 COPY /Y "%HOME%\basic_games\games\dao_game\DAOInstall.py" "%ARCHIVE%\basic_games\games\dao_game\DAOInstall.py"
 COPY /Y "%HOME%\basic_games\games\dao_game\DAOUtils.py" "%ARCHIVE%\basic_games\games\dao_game\DAOUtils.py"
+COPY /Y "%HOME%\basic_games\games\dao_game\DAO_Addins.xml" "%ARCHIVE%\basic_games\games\dao_game\DAO_Addins.xml"
+COPY /Y "%HOME%\basic_games\games\dao_game\DAO_Offers.xml" "%ARCHIVE%\basic_games\games\dao_game\DAO_Offers.xml"
 
 ECHO:
 ECHO Copying DAO Tools plugin files.
@@ -39,6 +41,8 @@ COPY /Y "%HOME%\dao_plugins\dao_dlc_data.xml" "%ARCHIVE%\dao_plugins\dao_dlc_dat
 COPY /Y "%HOME%\dao_plugins\dao_dlc_manager.py" "%ARCHIVE%\dao_plugins\dao_dlc_manager.py"
 COPY /Y "%HOME%\dao_plugins\dao_utils.py" "%ARCHIVE%\dao_plugins\dao_utils.py"
 COPY /Y "%HOME%\dao_plugins\dao.ico" "%ARCHIVE%\dao_plugins\dao.ico"
+COPY /Y "%HOME%\dao_plugins\dao_addins.xml" "%ARCHIVE%\dao_plugins\dao_addins.xml"
+COPY /Y "%HOME%\dao_plugins\dao_offers.xml" "%ARCHIVE%\dao_plugins\dao_offers.xml"
 
 ECHO:
 ECHO Building zip archive.
