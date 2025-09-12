@@ -17,7 +17,7 @@ class DAOInstall:
         """Plan the install tasks without modifying the tree.""" 
         install_path_dict: dict[str, list[str]] = {
             'bioware' : [], 'contents' : [], 'dazip' : [],
-            'mo2flatten' : [], 'override' : [],
+            'docs' : [], 'mo2flatten' : [], 'override' : [],
             }              
         for entry in DAOUtils.walk_tree(filetree):
             path = entry.pathFrom(filetree, '/')
@@ -35,6 +35,8 @@ class DAOInstall:
             else:
                 if lower_path.endswith(".dazip.mo2unpack"):
                     key = 'dazip'
+                elif lower_path.startswith("docs/"):
+                    key = 'docs'
                 elif lower_path.endswith(".override.mo2unpack"):
                     key = 'override'
                 else: continue
@@ -48,6 +50,7 @@ class DAOInstall:
             "bioware"    : DAOInstall.install_bioware,
             'contents'   : DAOInstall.install_contents,
             'dazip'      : DAOInstall.install_dazip,
+            'docs'       : DAOInstall.install_docs,
             'override'   : DAOInstall.install_override,
             'mo2flatten' : DAOInstall.install_mo2flatten,
         }
@@ -218,6 +221,18 @@ class DAOInstall:
         if not DAOUtils.move_file_overwrite_dirs(src_path, dst_path):
             return False
         return DAOUtils.format_xml_file(dst_path)
+
+    ##################
+    ## Install docs ##
+    ##################
+    @staticmethod
+    def install_docs(path: str, mod_path: str) -> bool:
+        """Move docs dir to subfolder based on mod name"""
+        mod_name = os.path.basename(mod_path)
+        src_file = DAOUtils.os_path(mod_path, path)
+        dst_file = DAOUtils.os_path(mod_path, f"{path.replace("docs", f"docs/{mod_name}")}")
+        return DAOUtils.move_file_overwrite_dirs(src_file, dst_file)
+
 
     ########################
     ## Install mo2flatten ##
