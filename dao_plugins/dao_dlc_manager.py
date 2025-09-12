@@ -12,11 +12,8 @@ from PyQt6.QtWidgets import (
     QProgressDialog, QPushButton, QVBoxLayout, QWidget, 
 )
 
-
 from typing import Callable, Generator
-
 from xml.etree import ElementTree as ET
-
 from .dao_utils import DAOUtils
 
 class DAODLCManager(mobase.IPluginTool):
@@ -161,6 +158,9 @@ class DAODLCManager(mobase.IPluginTool):
     def _get_dlc_list(self) -> ET.Element:
         return self._dlc_list
 
+    def _get_plugin_path(self) -> str:
+        return "plugins/dao_plugins"
+    
     def _get_download_path(self) -> str:
         return "plugins/dao_plugins/dlc_archive"
     
@@ -230,7 +230,7 @@ class DAODLCManager(mobase.IPluginTool):
         self._update_dlc_status()
 
         # Remove incomplete DLC installs
-        #self._remove_incomplete_dlc_installs()
+        self._remove_incomplete_dlc_installs()
 
         # Update addins.xml and offers.xml
         self._build_addins_offers_xml()
@@ -272,7 +272,7 @@ class DAODLCManager(mobase.IPluginTool):
         self._update_dlc_status()
 
         # Remove incomplete DLC installs
-        #self._remove_incomplete_dlc_installs()
+        self._remove_incomplete_dlc_installs()
 
         # Update addins.xml and offers.xml
         self._build_addins_offers_xml()
@@ -346,11 +346,8 @@ class DAODLCManager(mobase.IPluginTool):
                 missing = False
                 for path in paths:
                     file_path = DAOUtils.os_path(dir,path)
-                    if not os.path.exists(file_path):
-                        ## TEMP >>
-                        if path.casefold().endswith("manifest.xml"):
-                            DAOUtils.log_message(f"Missing Manifest.xml -> {path}")                            
-                        ## TEMP ^^ 
+                    is_manifest = path.casefold().endswith("manifest.xml")
+                    if (not is_manifest) and not os.path.exists(file_path):                              
                         missing = True
                         continue
                     found = True
@@ -363,6 +360,7 @@ class DAODLCManager(mobase.IPluginTool):
             for attrib, dir in dirs_dict.items():
                 if dlc_item.get(f"{attrib}_Status", "") != "Incomplete":
                     continue
+                DAOUtils.log_message(f"Removing partially installed DLC: {dlc_item.get("UID")}")
                 if dir == mod_dir:
                     DAOUtils.remove_dir(mod_dir)
                     dlc_item.set(f"{attrib}_Status", "Missing")
@@ -588,32 +586,43 @@ class DAODLCManager(mobase.IPluginTool):
         "Addins" : ("AddInItem","AddInsList"),
         "Offers" : ("OfferItem","OfferList"),
     }
+
     def _build_addins_offers_xml(self) -> bool:
         """Build Addins.xml and Offers.xml""" 
-        for mod_type in self._xml_tags.keys():
+        for mod_type, (item_tag, list_tag) in self._xml_tags.items():
             DAOUtils.log_message(f"Building {mod_type}.xml...")
             path_list = self._get_manifest_paths(mod_type)
 
-            item_tag, list_tag = self._xml_tags[mod_type]
             item_dict: dict[str, ET.Element] = {}
             for path in path_list:
                 with open(path, encoding="utf-8") as f:
                     raw_xml = f.read()
-                raw_xml = raw_xml.replace('RequiresAuthorization="1"','RequiresAuthorization="0"')
                 root = ET.fromstring(raw_xml)
                 item_list = root.find(list_tag)
                 if item_list is None:
                     continue
                 for item in item_list.findall(item_tag):
                     uid = item.get("UID")
-                    if not uid:
-                        continue
-                    item_dict[uid] = item
-            root = ET.Element(list_tag)
-            for item in item_dict.values():
-                root.append(item)
+                    if uid:
+                        item_dict[uid] = item
 
+            xml_gold = DAOUtils.os_path(self._get_plugin_path(), f"DAO_{mod_type}.xml")
+
+            if os.path.exists(xml_gold):
+                root = ET.parse(xml_gold).getroot()
+            else:
+                root = ET.Element(list_tag)   
+            existing_items = {item.get("UID"): item for item in root.findall(item_tag) if item.get("UID")}
+
+            for uid, new_item in item_dict.items():
+                if uid in existing_items:
+                    old_item = existing_items[uid]
+                    DAOUtils.overwrite_element(old_item, new_item)
+                    continue
+                root.append(new_item)
+   
             xml_str = ET.tostring(root, encoding="unicode")
+            xml_str = xml_str.replace('RequiresAuthorization="1"','RequiresAuthorization="0"')
             xml_bytes = DAOUtils.pretty_format_xml(xml_str)
             data_dir = self._get_data_dir()
             xml_path = DAOUtils.os_path(data_dir, "Settings", f"{mod_type}.xml")
@@ -692,8 +701,10 @@ class DAODLCManager(mobase.IPluginTool):
         progress.setValue(0)
         
         for i, (src, dst) in enumerate(file_moves, 1):
-            if not DAOUtils.move_file_overwrite_dirs(src, dst):
-                return False
+            is_manifest = src.casefold().endswith("manifest.xml")
+            if (not is_manifest) or os.path.exists(src):
+                if not DAOUtils.move_file_overwrite_dirs(src, dst):
+                    return False
             progress.setValue(i)
             QApplication.processEvents()
         return True

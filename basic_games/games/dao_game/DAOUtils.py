@@ -9,6 +9,7 @@ import zipfile
 from PyQt6.QtCore import qInfo, Qt
 from PyQt6.QtWidgets import QMessageBox, QProgressDialog
 from typing import Iterable
+from xml.etree import ElementTree as ET
 
 ####################
 ### Helper Utils ###
@@ -332,7 +333,27 @@ class DAOUtils:
         except Exception as e:
             DAOUtils.log_message(f"Failed to parse xml: {e}")
             return "".encode('utf-8')
+
+    @staticmethod
+    def overwrite_element(old_elem: ET.Element, new_elem: ET.Element) -> bool:
+        """Fully overwrite an ElementTree element in-place."""
+        # Overwrite tag
+        old_elem.tag = new_elem.tag
+
+        # Overwrite attributes completely
+        old_elem.attrib.clear()
+        old_elem.attrib.update(new_elem.attrib)
+
+        # Overwrite text and tail
+        old_elem.text = new_elem.text
+        old_elem.tail = new_elem.tail
+
+        # Overwrite children
+        old_elem[:] = list(new_elem)
+
+        return True
     
+
     #################
     ## Misc. Utils ##
     #################

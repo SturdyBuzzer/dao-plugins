@@ -61,30 +61,41 @@ class DAOLaunch:
     @staticmethod
     def build_addins_offers_xml(target_dir: str, game_dir: str, organizer: mobase.IOrganizer) -> bool:
         """Build Addins.xml and Offers.xml"""  
-        for mod_type in DAOLaunch._xml_tags.keys():
+        for mod_type, (item_tag, list_tag) in DAOLaunch._xml_tags.items():
             
             DAOUtils.log_message(f"Building {mod_type}.xml...")
             path_list = DAOLaunch.get_file_paths("Manifest.xml", game_dir, organizer, mod_type)
 
-            item_tag, list_tag = DAOLaunch._xml_tags[mod_type]
             item_dict: dict[str, ET.Element] = {} 
             for path in path_list:
                 with open(path, encoding="utf-8") as f:
                     raw_xml = f.read()
-                raw_xml = raw_xml.replace('RequiresAuthorization="1"','RequiresAuthorization="0"')
                 root = ET.fromstring(raw_xml)
                 item_list = root.find(list_tag)
                 if item_list is None:
                     continue
                 for item in item_list.findall(item_tag):
                     uid = item.get("UID")
-                    if not uid:
-                        continue
-                    item_dict[uid] = item
-            root = ET.Element(list_tag)
-            for item in item_dict.values():
-                root.append(item)
-            xml_str = ET.tostring(root, encoding="unicode")          
+                    if uid:
+                        item_dict[uid] = item
+
+            xml_gold = DAOUtils.os_path("plugins/basic_games/games/dao_game", f"DAO_{mod_type}.xml")
+
+            if os.path.exists(xml_gold):
+                root = ET.parse(xml_gold).getroot()
+            else:
+                root = ET.Element(list_tag)   
+            existing_items = {item.get("UID"): item for item in root.findall(item_tag) if item.get("UID")}
+
+            for uid, new_item in item_dict.items():
+                if uid in existing_items:
+                    old_item = existing_items[uid]
+                    DAOUtils.overwrite_element(old_item, new_item)
+                    continue
+                root.append(new_item)
+
+            xml_str = ET.tostring(root, encoding="unicode") 
+            xml_str = xml_str.replace('RequiresAuthorization="1"','RequiresAuthorization="0"')         
             xml_bytes = DAOUtils.pretty_format_xml(xml_str)
             xml_path = DAOUtils.os_path(target_dir, "Settings", f"{mod_type}.xml")
             if not DAOUtils.write_file_bytes(xml_path, xml_bytes):
@@ -100,8 +111,7 @@ class DAOLaunch:
         """Dynamically build Chargenmorphcfg.xml based on contents of override dir"""
         DAOUtils.log_message(f"Building Chargenmorphcfg.xml...")
         ovrd_path = "packages/core/override"
-        DAOLaunch.hide_files("Chargenmorphcfg.xml", game_dir, organizer, ovrd_path)
-
+        
         vfs_tree = organizer.virtualFileTree()
         ovrd_tree = vfs_tree.find(ovrd_path, mobase.IFileTree.FileTypes.DIRECTORY)
         if not isinstance(ovrd_tree, mobase.IFileTree):
@@ -125,8 +135,10 @@ class DAOLaunch:
                 continue
             DAOChargen.add_resource(chargenmorph, name, resource_type)
         if not visited:
+            DAOUtils.log_message(f"No chargen mods detected.")
             return True
 
+        DAOLaunch.hide_files("Chargenmorphcfg.xml", game_dir, organizer, ovrd_path)
         # Write completed tree to chargenmorphcfg.xml
         xml_string = ET.tostring(chargenmorph, encoding="unicode")
         xml_bytes = DAOUtils.pretty_format_xml(xml_string)
