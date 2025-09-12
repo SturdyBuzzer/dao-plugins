@@ -67,7 +67,7 @@ class DAOModDataChecker(mobase.ModDataChecker):
                 (suffix in DAOModDataChecker._bin_extensions and name not in DAOModDataChecker._bin_exceptions and path != f"bin_ship/{name}")
                 or
                 # File is a docs type and not already in docs/ (excluding chargenmorphcfg.xml and manifest.xml)
-                (suffix in DAOModDataChecker._docs_extensions and name not in DAOModDataChecker._docs_exceptions and path != f"docs/{name}")
+                (suffix in DAOModDataChecker._docs_extensions and name not in DAOModDataChecker._docs_exceptions and not path.startswith("docs/"))
                 or
                 # File is otherwise not in a valid directory (move to packages/core/override)
                 (not path.startswith(DAOModDataChecker._dir_list) and name != "systeminformation.xml")

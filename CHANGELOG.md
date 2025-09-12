@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.2.4
+**feature/docs**
+- now all docs type files will be placed in a subfolder corresponding to the mod name
+- `docs/<mod_name>/*`
+
 ## v0.2.3
 **feature/addins_fix**
 - DLC detection previously overlooked DLC installed with no Manifest.xml (via DAUpdater.exe)
