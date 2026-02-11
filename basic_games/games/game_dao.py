@@ -22,6 +22,7 @@ class DAOriginsGame(BasicGame):
     GameBinary = r"bin_ship\DAOrigins.exe"
     GameLauncher = r"DAOriginsLauncher.exe"
     GameDataPath = r"%DOCUMENTS%\BioWare\Dragon Age"
+    GameDocumentsDirectory = r"%DOCUMENTS%\BioWare\Dragon Age\Settings"
     GameSavesDirectory = r"%DOCUMENTS%\BioWare\Dragon Age\Characters"
     GameSaveExtension = "das"
     GameSteamId = [17450, 47810]
@@ -56,7 +57,15 @@ class DAOriginsGame(BasicGame):
         DAOUtils.setup_utils(organizer, self.name())
 
         return True   
-
+    
+    #################
+    ### ini Files ###
+    #################   
+    def iniFiles(self):
+        return ["DragonAge.ini", "KeyBindings.ini",
+            "DAOriginsConfig.ini", "Addins.xml",
+            "Offers.xml", "Profile.dap"]
+    
     ###################
     ### Executables ###
     ###################
