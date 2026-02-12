@@ -70,8 +70,9 @@ class DAOriginsGame(BasicGame):
     ###################
     def executables(self) -> list[mobase.ExecutableInfo]:
         """Set up DAO executables."""
+        base_dir = self._organizer.basePath()
         game_dir = self.gameDirectory()
-        return [
+        exe_list = [
             mobase.ExecutableInfo(
                 self.gameName(),
                 game_dir.absoluteFilePath(self.binaryName()),
@@ -81,6 +82,10 @@ class DAOriginsGame(BasicGame):
                 game_dir.absoluteFilePath(self.getLauncherName()),
             ),
             mobase.ExecutableInfo(
+                "Explore Virtual Folder",
+                DAOUtils.os_path(base_dir, "explorer++/Explorer++.exe"),
+            ),            
+            mobase.ExecutableInfo(
                 "Tools: DAO - Config",
                 game_dir.absoluteFilePath("bin_ship/DAOriginsConfig.exe"),
             ),
@@ -89,6 +94,7 @@ class DAOriginsGame(BasicGame):
                 game_dir.absoluteFilePath("bin_ship/DAUpdater.exe"), 
             ),
         ]
+        return sorted(exe_list, key=lambda exe: str(exe.title()))
 
     ################
     ### Settings ###
