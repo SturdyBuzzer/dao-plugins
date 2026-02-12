@@ -62,9 +62,8 @@ class DAOriginsGame(BasicGame):
     ### ini Files ###
     #################   
     def iniFiles(self):
-        return ["DragonAge.ini", "KeyBindings.ini",
-            "DAOriginsConfig.ini", "Addins.xml",
-            "Offers.xml", "Profile.dap"]
+        return ["DAOriginsConfig.ini", "DragonAge.ini",
+            "KeyBindings.ini", "Profile.dap"]
     
     ###################
     ### Executables ###
