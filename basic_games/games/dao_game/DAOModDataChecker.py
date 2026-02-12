@@ -15,12 +15,14 @@ class DAOModDataChecker(mobase.ModDataChecker):
         #Fix: Single root folders getting traversed by Simple Installer:
         parent = filetree.parent()
         filetree = parent if parent else filetree
+        #Skip checks for already installed files
+        if filetree.name():
+            return mobase.ModDataChecker.VALID
+        #Check if fixable
         if DAOModDataChecker.is_data_fixable(filetree): 
             return mobase.ModDataChecker.FIXABLE
-        
         #if <case for data being invalid?>:
         #    return mobase.ModDataChecker.INVALID
-
         return mobase.ModDataChecker.VALID
     
     def fix(self, filetree: mobase.IFileTree) -> mobase.IFileTree:
@@ -40,8 +42,7 @@ class DAOModDataChecker(mobase.ModDataChecker):
     _bin_exceptions = {"daoriginsconfig.ini", "dragonage.ini", "keybindings.ini"}
     _bin_extensions = {"asi", "conf", "dll", "exe", "ini"}
 
-    _docs_exceptions = {"addins.xml", "chargenmorphcfg.xml", "manifest.xml", "offers.xml", "overrideconfig.xml", "systeminformation.xml"}
-    _docs_extensions = {"jpg", "pdf", "png", "txt", "xml"}
+    _docs_extensions = {"jpg", "pdf", "png", "txt"}
     
     @staticmethod
     def is_data_fixable(filetree: mobase.IFileTree) -> bool:
@@ -67,7 +68,7 @@ class DAOModDataChecker(mobase.ModDataChecker):
                 (suffix in DAOModDataChecker._bin_extensions and name not in DAOModDataChecker._bin_exceptions and path != f"bin_ship/{name}")
                 or
                 # File is a docs type and not already in docs/ (excluding chargenmorphcfg.xml and manifest.xml)
-                (suffix in DAOModDataChecker._docs_extensions and name not in DAOModDataChecker._docs_exceptions and not path.startswith("docs/"))
+                (suffix in DAOModDataChecker._docs_extensions and not path.startswith("docs/"))
                 or
                 # File is otherwise not in a valid directory (move to packages/core/override)
                 (not path.startswith(DAOModDataChecker._dir_list) and name != "systeminformation.xml")
@@ -104,7 +105,7 @@ class DAOModDataChecker(mobase.ModDataChecker):
             elif suffix in DAOModDataChecker._bin_extensions:
                 new_path = f"bin_ship/{name}"
             # File is a docs type (excluding chargenmorphcfg.xml and manifest.xml)
-            elif suffix in DAOModDataChecker._docs_extensions and name not in DAOModDataChecker._docs_exceptions:
+            elif suffix in DAOModDataChecker._docs_extensions:
                 new_path = f"docs/{name}"
             # File is otherwise not in a valid directory (move to packages/core/override)
             elif not lower_path.startswith(DAOModDataChecker._dir_list):
