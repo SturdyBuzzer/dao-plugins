@@ -1,5 +1,19 @@
 # Changelog
 
+## v0.2.5
+- General cleanup and better error handling
+**feature/manage_configs**
+- Can now use MO2s ini Editor to manage DAO settings files
+**feature/sort_exes**
+- Sort executables in alphabetical order
+**feature/data_checker_fixes**
+- no longer treat .xml files as docs
+- no data checking for already installed files, reduce annoying warnings
+**feature/bin_ship_recovery**
+- improved method of deploying bin_ship files with better backup and recovery
+**feature/rootbuilder_warning**
+- warns of potential clash between rootbuilder and deploy_bin_ship feature
+
 ## v0.2.4
 **feature/docs**
 - now all docs type files will be placed in a subfolder corresponding to the mod name

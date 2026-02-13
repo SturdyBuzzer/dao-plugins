@@ -244,7 +244,10 @@ class DAOriginsGame(BasicGame):
             return
         DAOUtils.log_message(f"Setting: {setting} changed from {old} to {new}")
         setting_desc = self._setting_descriptions[setting]
-        if setting == "flatten_override" and new:
+        if setting == "deploy_bin_ship" and new:
+            # Warn of potential clash with root builder
+            self._rootbuilder_warning()
+        elif setting == "flatten_override" and new:
             if not DAOUtils.show_message_box(
                 f"Flatten packages/core/override?",
                 [
@@ -277,8 +280,7 @@ class DAOriginsGame(BasicGame):
         """Event Handler for onModInstalled"""
         mod_name = mod.name()
         filetree = mod.fileTree()
-        rootbuilder = self._organizer.isPluginEnabled("RootBuilder")
-        install_tasks = DAOInstall.queue_install_tasks(filetree, rootbuilder)
+        install_tasks = DAOInstall.queue_install_tasks(filetree)
         if not install_tasks.__len__(): 
             return
         mod_dir = mod.absolutePath()
@@ -393,8 +395,10 @@ class DAOriginsGame(BasicGame):
 
     def _handle_user_interface_initialized(self, ui: QMainWindow) -> None:
         """Event Handler for onUserInterfaceInitialized"""
-        # Recover bin dir if persisted bin list exists
         if self._get_setting("deploy_bin_ship"):
+            # Warn of potential clash with root builder
+            self._rootbuilder_warning()
+            # Recover bin dir if persisted bin list exists
             DAOLaunch.check_secondary_status(self._path_dict, self._organizer)
 
     # Check that the triggered app is the game itself
@@ -404,3 +408,20 @@ class DAOriginsGame(BasicGame):
         game_bin = DAOUtils.os_path(game_dir,self.binaryName())
         launcher_bin = DAOUtils.os_path(game_dir,self.getLauncherName())
         return DAOUtils.os_path(app_path) in {game_bin, launcher_bin}
+    
+    def _rootbuilder_warning(self):
+        """Warn of potential clash with root builder"""
+        rootbuilder = self._organizer.isPluginEnabled("RootBuilder")
+        if not rootbuilder:
+            return
+        DAOUtils.log_message("Warning: Rootbuilder plugin detected! Disable 'deploy_bin_ship' feature.")
+        DAOUtils.show_message_box(
+            header = "Warning: Rootbuilder plugin detected!", 
+            message = [
+                f"DAO plugin's 'deploy_bin_ship' feature is enabled.<br>",
+                f"Rootbuilder is likely not compatible with this feature.<br><br>"
+                f"Please remove Rootbuilder, or disable 'deploy_bin_ship'.<br><br>",
+            ],
+            warning = True,
+            )
+        self._set_setting("deploy_bin_ship", False)

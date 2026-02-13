@@ -13,7 +13,7 @@ from .DAOUtils import DAOUtils
 class DAOInstall:
 
     @staticmethod 
-    def queue_install_tasks(filetree: mobase.IFileTree, rootbuilder: bool) -> dict[str, list[str]]:    
+    def queue_install_tasks(filetree: mobase.IFileTree) -> dict[str, list[str]]:  
         """Plan the install tasks without modifying the tree.""" 
         install_path_dict: dict[str, list[str]] = {
             'bioware' : [], 'contents' : [], 'dazip' : [],
