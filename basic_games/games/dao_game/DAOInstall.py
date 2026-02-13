@@ -229,6 +229,8 @@ class DAOInstall:
     def install_docs(path: str, mod_path: str) -> bool:
         """Move docs dir to subfolder based on mod name"""
         mod_name = os.path.basename(mod_path)
+        if path.startswith(f"docs/{mod_name}/"):
+            return True
         src_file = DAOUtils.os_path(mod_path, path)
         dst_file = DAOUtils.os_path(mod_path, f"{path.replace("docs", f"docs/{mod_name}")}")
         return DAOUtils.move_file_overwrite_dirs(src_file, dst_file)

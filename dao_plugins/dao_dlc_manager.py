@@ -180,7 +180,7 @@ class DAODLCManager(mobase.IPluginTool):
         # Select which features to run
         option_one = "Download and Install DLC"
         option_two = "Manage DLC Install Location"
-        option_three = "Fix DLC Item Transfer To Awakening"
+        option_three = "(Broken! Don't Use!) Fix DLC Item Transfer To Awakening"
         selected = self._show_check_list(
             self.displayName(),
             "Please select which actions to take:",
@@ -252,8 +252,8 @@ class DAODLCManager(mobase.IPluginTool):
             self.displayName(),
             (
                 "Choose which directory to keep installed DLC:<br><br>"
-                "1. Game Directory<br><br>"
-                "2. Data Directory<br><br>"
+                "1. Game Directory (Recommended)<br><br>"
+                "2. Data Directory (Documents\\Bioware\\Dragon Age)<br><br>"
                 "3. Mods Directory (Manage DLC as MO2 Mods)<br><br>"
             ),
             list(options.keys()),
@@ -316,8 +316,8 @@ class DAODLCManager(mobase.IPluginTool):
     def _walk_dlc_item_dirs(self) -> Generator[tuple[ET.Element, str, dict[str, str],  list[str]], None, None]:
         """Walk through game_dir, data_dir, mods_path for each dlc_item"""
         # Get file paths
-        data_dir = self._get_data_dir()
-        game_dir = self._get_game_dir()
+        data_dir = DAOUtils.os_path(self._get_data_dir())
+        game_dir = DAOUtils.os_path(self._get_game_dir())
         mods_path = self._organizer.modsPath()
         # Read in the dlc data
         dlc_list = self._get_dlc_list()
@@ -330,7 +330,7 @@ class DAODLCManager(mobase.IPluginTool):
             dirs_dict = {
                 "Game" : game_dir,
                 "Data" : data_dir,
-                "Mods"  : mod_dir,
+                "Mods" : mod_dir,
             }
             paths = self._get_dlc_item_paths(dlc_item)
             yield dlc_item, mod_dir, dirs_dict, paths
@@ -340,19 +340,21 @@ class DAODLCManager(mobase.IPluginTool):
         for dlc_item, _mod_dir, dirs_dict, paths in self._walk_dlc_item_dirs():        
             for attrib, dir in dirs_dict.items():
                 if not os.path.exists(dir):
-                    dlc_item.set(f"{attrib}_Status", "Missing")
+                    status = "Missing"
+                    dlc_item.set(f"{attrib}_Status", status)
                     continue
                 found = False
                 missing = False
                 for path in paths:
+                    if path.casefold().endswith("manifest.xml"):
+                        continue
                     file_path = DAOUtils.os_path(dir,path)
-                    is_manifest = path.casefold().endswith("manifest.xml")
-                    if (not is_manifest) and not os.path.exists(file_path):                              
+                    if not DAOUtils.file_exists(file_path):                            
                         missing = True
                         continue
                     found = True
                 status = "Installed" if found and not missing else "Incomplete" if found else "Missing"
-                dlc_item.set(f"{attrib}_Status", status) 
+                dlc_item.set(f"{attrib}_Status", status)
 
     def _remove_incomplete_dlc_installs(self) -> None:
         """Removes all incomplete DLC installs"""
@@ -414,7 +416,7 @@ class DAODLCManager(mobase.IPluginTool):
             target_name =f"{uid}.zip"
             target_path = DAOUtils.os_path(download_path, target_name)
             # Check if file already downloaded
-            if os.path.exists(target_path) and self._validate_checksum(target_path, checksum):
+            if DAOUtils.file_exists(target_path) and self._validate_checksum(target_path, checksum):
                 DAOUtils.log_message(f"File already exists: {target_name}.")
                 continue
             url = dlc_item.get("URL", "")
@@ -589,6 +591,11 @@ class DAODLCManager(mobase.IPluginTool):
 
     def _build_addins_offers_xml(self) -> bool:
         """Build Addins.xml and Offers.xml""" 
+        profile = self._organizer.profile()
+        if profile.localSettingsEnabled():
+            target_dir = profile.absolutePath()
+        else:
+            target_dir = f"{self._get_data_dir()}/Settings"     
         for mod_type, (item_tag, list_tag) in self._xml_tags.items():
             DAOUtils.log_message(f"Building {mod_type}.xml...")
             path_list = self._get_manifest_paths(mod_type)
@@ -608,7 +615,7 @@ class DAODLCManager(mobase.IPluginTool):
 
             xml_gold = DAOUtils.os_path(self._get_plugin_path(), f"DAO_{mod_type}.xml")
 
-            if os.path.exists(xml_gold):
+            if DAOUtils.file_exists(xml_gold):
                 root = ET.parse(xml_gold).getroot()
             else:
                 root = ET.Element(list_tag)   
@@ -620,12 +627,11 @@ class DAODLCManager(mobase.IPluginTool):
                     DAOUtils.overwrite_element(old_item, new_item)
                     continue
                 root.append(new_item)
-   
+
             xml_str = ET.tostring(root, encoding="unicode")
             xml_str = xml_str.replace('RequiresAuthorization="1"','RequiresAuthorization="0"')
             xml_bytes = DAOUtils.pretty_format_xml(xml_str)
-            data_dir = self._get_data_dir()
-            xml_path = DAOUtils.os_path(data_dir, "Settings", f"{mod_type}.xml")
+            xml_path = DAOUtils.os_path(target_dir, f"{mod_type}.xml")
             if not DAOUtils.write_file_bytes(xml_path, xml_bytes):
                 return False
         return True
@@ -702,7 +708,7 @@ class DAODLCManager(mobase.IPluginTool):
         
         for i, (src, dst) in enumerate(file_moves, 1):
             is_manifest = src.casefold().endswith("manifest.xml")
-            if (not is_manifest) or os.path.exists(src):
+            if (not is_manifest) or DAOUtils.file_exists(src):
                 if not DAOUtils.move_file_overwrite_dirs(src, dst):
                     return False
             progress.setValue(i)
@@ -738,7 +744,7 @@ class DAODLCManager(mobase.IPluginTool):
         sep_name = "Dragon Age Origins - Official DLC_separator"
         sep_path = DAOUtils.os_path(self._organizer.modsPath(), sep_name)
         meta_path = DAOUtils.os_path(sep_path, "meta.ini")
-        if os.path.exists(meta_path):
+        if DAOUtils.file_exists(meta_path):
             return True
         if not DAOUtils.make_dirs(sep_path):
             return False
