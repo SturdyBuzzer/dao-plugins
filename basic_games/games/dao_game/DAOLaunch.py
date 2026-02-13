@@ -133,11 +133,10 @@ class DAOLaunch:
     def _read_secondary_dir_list() -> dict[str, str | list[str]] | None:
         """Read in the saved dir list from xml"""
         backup_path = DAOLaunch._get_backup_path()           
-        tree = DAOUtils.read_file_xml(backup_path)
-        if tree is None:
+        root = DAOUtils.read_file_xml(backup_path)
+        if root is None:
             DAOUtils.log_message(f"Warning: Failed to read secondary dir backup: {backup_path}")
             return None
-        root = tree.getroot()
         app_path = root.findtext("app_path")
         if app_path is None:
             DAOUtils.log_message(f"Warning: App path missing from secondary dir backup: {backup_path}")

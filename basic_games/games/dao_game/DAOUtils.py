@@ -361,14 +361,14 @@ class DAOUtils:
         return True
 
     @staticmethod 
-    def read_file_xml(file_path: str) -> ET.ElementTree[ET.Element[str]] | None:
-        """Read file to string"""
+    def read_file_xml(file_path: str) -> ET.Element | None:
+        """Read xml file to ET element"""
         try:
             tree = ET.parse(file_path)
-            return tree
+            return tree.getroot()
         except Exception as e:
             DAOUtils.log_message(f"Failed to read xml file {file_path}: {e}")
-            return None    
+            return None   
 
     #################
     ## Misc. Utils ##
