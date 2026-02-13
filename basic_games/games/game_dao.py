@@ -247,7 +247,7 @@ class DAOriginsGame(BasicGame):
         if setting == "deploy_bin_ship" and new:
             # Warn of potential clash with root builder
             self._rootbuilder_warning()
-        elif setting == "flatten_override" and new:
+        if setting == "flatten_override" and new:
             if not DAOUtils.show_message_box(
                 f"Flatten packages/core/override?",
                 [

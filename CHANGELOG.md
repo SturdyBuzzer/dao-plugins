@@ -1,6 +1,5 @@
 # Changelog
 
-
 ## v0.2.4
 **feature/docs**
 - now all docs type files will be placed in a subfolder corresponding to the mod name
