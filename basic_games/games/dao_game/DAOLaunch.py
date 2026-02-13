@@ -363,3 +363,20 @@ class DAOLaunch:
             if not DAOUtils.move_file(new_path, path) if unhide else DAOUtils.move_file(path, new_path):
                 return False
         return True
+    
+    ############################
+    ### Move Save Game Files ###
+    ############################
+
+    @staticmethod
+    def move_save_game_files(profile: mobase.IProfile, path_dict: dict[str, str]) -> bool:
+        """ Move any save files in the overwrite dir back to saves dir"""
+        overwrite = f"{path_dict["overwrite"]}/Characters"
+        if profile.localSavesEnabled():
+            saves_dir = f"{profile.absolutePath()}/saves"
+        else:
+            saves_dir = path_dict["saves_dir"]
+        if not os.path.exists(overwrite):
+            return True
+        DAOUtils.log_message(f"Returning save files.")
+        return DAOUtils.merge_dirs(overwrite, saves_dir)

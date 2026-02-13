@@ -63,6 +63,7 @@ class DAOriginsGame(BasicGame):
             "docs_dir"  : self.documentsDirectory().absolutePath(),
             "game_dir"  : self.gameDirectory().absolutePath(),
             "saves_dir" : self.savesDirectory().absolutePath(),
+            "overwrite" : self._organizer.overwritePath(),
             }
 
         # Init DAOUtils for logging
@@ -324,6 +325,7 @@ class DAOriginsGame(BasicGame):
                 DAOLaunch.hide_files("chargenmorphcfg.xml", game_dir, self._organizer, ovrd_path, True)
                 DAOUtils.log_message(f"Warning: Failed to build Chargenmorphcfg.xml")
                 show_warning = True
+        # Report any failures                
         if show_warning:
             DAOUtils.show_message_box(
                 header = "Warning!", 
@@ -354,16 +356,16 @@ class DAOriginsGame(BasicGame):
                 show_warning = True
         # Restore Addins.xml and Offers.xml
         if self._get_setting("build_addins_offers_xml"):
+            DAOUtils.log_message(f"Restoring Addins.xml/Offers.xml.")
             for mod_type in ("Addins", "Offers"):
                 if profile.localSettingsEnabled():
                     link_path = DAOUtils.os_path(profile_dir, f"{mod_type}.xml")
-                    DAOUtils.log_message(f"Removing links.")
+                    DAOUtils.log_message(f"Removing {mod_type}.xml link.")
                     if not DAOUtils.restore_backup(link_path):
                         if DAOUtils.remove_link(link_path, True):
                             continue
                         DAOUtils.log_message(f"Warning: Failed to restore profile dir: {profile_dir}.")
                         show_warning = True
-                DAOUtils.log_message(f"Restoring Addins.xml/Offers.xml.")
                 xml_path = DAOUtils.os_path(overwrite, "Settings", f"{mod_type}.xml")
                 if not DAOUtils.restore_backup(xml_path):
                     if DAOUtils.remove_file(xml_path):
@@ -380,7 +382,11 @@ class DAOriginsGame(BasicGame):
                 show_warning = True
             if not DAOUtils.remove_file(chargen_path):
                 show_warning = True
+        # Move any files in the overwrite dir back to settings dir
+        DAOLaunch.move_save_game_files(profile, self._path_dict)
+        # Remove empty sub-dirs from overwrite dir           
         DAOUtils.remove_empty_subdirs(overwrite)
+        # Report any failures
         if show_warning:
             DAOUtils.show_message_box(
                 header = "Warning!", 
