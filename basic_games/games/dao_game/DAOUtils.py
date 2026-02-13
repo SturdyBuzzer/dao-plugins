@@ -87,7 +87,7 @@ class DAOUtils:
     
     @staticmethod 
     def create_backup(src: str) -> bool:
-        if not os.path.exists(src):
+        if not DAOUtils.file_exists(src):
             DAOUtils.log_message(f"Failed to create backup. File not found {src}")
             return False
         dst = f"{src}.mohidden"
@@ -117,6 +117,13 @@ class DAOUtils:
             return False
         return DAOUtils.remove_file(src) if delete else True
 
+    @staticmethod
+    def file_exists(file_path: str) -> bool:
+        "Check if file exists at path"
+        if os.path.exists(file_path):
+            return os.path.isfile(file_path)
+        return False
+    
     @staticmethod 
     def get_ext(filename:str) -> str:
         return filename.rsplit(".", 1)[1]
@@ -220,7 +227,7 @@ class DAOUtils:
     @staticmethod 
     def remove_file(file_path: str) -> bool:
         """Remove file at path."""
-        if not os.path.exists(file_path):
+        if not DAOUtils.file_exists(file_path):
             return True
         try:
             os.unlink(file_path)
@@ -262,7 +269,7 @@ class DAOUtils:
     @staticmethod 
     def restore_backup(dst: str) -> bool:
         src = f"{dst}.mohidden"
-        if not os.path.exists(src):
+        if not DAOUtils.file_exists(src):
             return False
         return DAOUtils.move_file_overwrite(src, dst)
     
@@ -352,7 +359,16 @@ class DAOUtils:
         old_elem[:] = list(new_elem)
 
         return True
-    
+
+    @staticmethod 
+    def read_file_xml(file_path: str) -> ET.ElementTree[ET.Element[str]] | None:
+        """Read file to string"""
+        try:
+            tree = ET.parse(file_path)
+            return tree
+        except Exception as e:
+            DAOUtils.log_message(f"Failed to read xml file {file_path}: {e}")
+            return None    
 
     #################
     ## Misc. Utils ##

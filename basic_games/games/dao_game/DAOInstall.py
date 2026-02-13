@@ -200,7 +200,7 @@ class DAOInstall:
     def install_dazip_manifest(temp_path: str, mod_path:str) -> bool:
         """Rename and format Manifest.xml."""
         src_path = DAOUtils.os_path(temp_path, "Manifest.xml")
-        if not os.path.exists(src_path):
+        if not DAOUtils.file_exists(src_path):
             DAOUtils.log_message(f"Failed to install Manifest - File not found: {src_path}")
             return False
         manifest = ET.parse(src_path).getroot()

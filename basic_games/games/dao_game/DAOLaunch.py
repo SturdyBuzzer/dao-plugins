@@ -3,8 +3,11 @@ import os
 
 from xml.etree import ElementTree as ET
 
+from PyQt6.QtWidgets import QMessageBox
+
 from .DAOChargen import DAOChargen
 from .DAOUtils import DAOUtils
+
 ###################
 ### Game Launch ###
 ###################       
@@ -13,42 +16,200 @@ class DAOLaunch:
     ########################################
     ### Move bin_ship files to game root ###
     ########################################
+
+    SECONDARY_DIR_BACKUP = r"plugins\basic_games\games\dao_game\DAO_BinList.xml"
+
+    _secondary_dirs = {
+    "bin_ship" : ("game_dir", "bin_ship"),
+    }
+
     @staticmethod
-    def deploy_bin_ship(game_dir: str, organizer: mobase.IOrganizer, deploy: bool) -> bool:
-        """Move bin_ship files to game root"""
-        vfs_tree = organizer.virtualFileTree()
-        bin_tree = vfs_tree.find("bin_ship", mobase.IFileTree.FileTypes.DIRECTORY)
-        if not isinstance(bin_tree, mobase.IFileTree):
+    def deploy_secondary_files(app_path: str, path_dict: dict[str, str], organizer: mobase.IOrganizer) -> bool:
+        """Move files to secondary dirs"""
+        # Backup snapshot of each secondary dir
+        if not DAOLaunch._save_secondary_dir_list(app_path, path_dict):
+            return False
+        # Move data files to deploy dirs
+        dir_dict = DAOLaunch._get_secondary_dirs()
+        for key, value in dir_dict.items():
+            deploy_dir = DAOLaunch._get_deploy_dir(path_dict, value)
+            if deploy_dir is None:
+                continue
+            DAOUtils.log_message(f"Deploying {key} files to: {deploy_dir}")
+            if not DAOLaunch._move_secondary_files(key, deploy_dir, organizer, True):
+                DAOUtils.log_message(f"Warning: Failed to deploy to secondary dirs!")
+                return False      
+        return True
+
+    @staticmethod
+    def recover_secondary_dirs(app_path: str, path_dict: dict[str, str], organizer: mobase.IOrganizer) -> bool:
+        """Recover secondary dirs to original state"""
+        # Read in snapshot of each secondary dir
+        data = DAOLaunch._read_secondary_dir_list()
+        if data is None:
+            return False
+        app_path_bak = data.get("app_path", "")
+        if isinstance(app_path_bak, list) or app_path_bak.casefold() != app_path.casefold():
+            DAOUtils.log_message(f"Warning: Backup does not match app: {app_path}")
+            return False
+        return DAOLaunch._restore_secondary_files(data, path_dict, organizer)
+
+    @staticmethod
+    def check_secondary_status( path_dict: dict[str, str], organizer: mobase.IOrganizer) -> bool:
+        """Check if secondary dir recovery was incomplete."""
+        # Detect and recover bin list
+        backup_path = DAOLaunch._get_backup_path()
+        if not DAOUtils.file_exists(backup_path):
             return True
-        for entry in bin_tree:
+        DAOUtils.log_message(f"Warning: Mod Organizer 2 may have crashed while game was running.")
+        QMessageBox.warning(None, "Warning!", (
+            f"Mod Organizer 2 may have crashed during gameplay!<br><br>"
+            "Please check bin_ship dir.<br><br>"
+            f"Backup file: {backup_path}.<br><br>"
+            ))
+        # Read in snapshot of each secondary dir
+        data = DAOLaunch._read_secondary_dir_list()
+        if data is None:
+            return False
+        return DAOLaunch._restore_secondary_files(data, path_dict, organizer)
+      
+    @staticmethod
+    def _restore_secondary_files(data: dict[str, str | list[str]], path_dict: dict[str, str], organizer: mobase.IOrganizer) -> bool:
+        """Restore files in secondary dirs"""
+        backup_path = DAOLaunch._get_backup_path()
+        # Restore data files in deploy dirs
+        dir_dict = DAOLaunch._get_secondary_dirs()
+        for key, value in dir_dict.items():
+            deploy_dir = DAOLaunch._get_deploy_dir(path_dict, value)
+            if deploy_dir is None:
+                continue
+            if DAOLaunch._move_secondary_files(key, deploy_dir, organizer, False):
+                file_list_bak = set(data.get(key, []))
+                overwrite = organizer.overwritePath()
+                if DAOLaunch._clean_secondary_dir(key, deploy_dir, file_list_bak, overwrite):
+                    continue
+            DAOUtils.log_message(f"Warning: Failed to restore secondary dirs! Please see logs.")
+            return False
+        # Remove snapshot of each secondary dir
+        if not DAOUtils.remove_file(backup_path):
+            DAOUtils.log_message(f"Warning: Failed to remove secondary dir list file: {backup_path}.")
+            return False        
+        return True 
+
+    @staticmethod
+    def _clean_secondary_dir(dir_name: str, deploy_dir: str, file_list_bak: set[str], overwrite: str) -> bool:
+        """Remove any untracked files from secondary dir."""      
+        file_list = DAOUtils.list_files(deploy_dir)
+        file_paths = file_list - file_list_bak
+        for path in file_paths:
+            src_path = DAOUtils.os_path(deploy_dir, path)
+            dst_path = DAOUtils.os_path(overwrite, dir_name, path)
+            if not DAOUtils.move_file_overwrite_dirs(src_path, dst_path):
+                return False
+        return True 
+       
+    @staticmethod
+    def _get_secondary_dirs() -> dict[str, tuple[str, str]]:
+        return DAOLaunch._secondary_dirs
+    
+    @staticmethod
+    def _save_secondary_dir_list(app_path: str, path_dict: dict[str, str]) -> bool:
+        """Save secondary dirs list to xml"""
+        backup_path = DAOLaunch._get_backup_path()
+        data: dict[str, str | list[str]] = {"app_path": app_path}
+        dir_dict = DAOLaunch._get_secondary_dirs()
+        for key, value in dir_dict.items():
+            deploy_path = DAOLaunch._get_deploy_dir(path_dict, value)
+            if deploy_path is None:
+                continue
+            file_list = DAOUtils.list_files(deploy_path)
+            data[key] = list(file_list)
+        if not DAOLaunch._write_backup_xml(backup_path, data):
+            DAOUtils.log_message(f"Failed to save secondary dir backup to {backup_path}.")
+            return False
+        return True
+
+    @staticmethod
+    def _read_secondary_dir_list() -> dict[str, str | list[str]] | None:
+        """Read in the saved dir list from xml"""
+        backup_path = DAOLaunch._get_backup_path()           
+        tree = DAOUtils.read_file_xml(backup_path)
+        if tree is None:
+            DAOUtils.log_message(f"Warning: Failed to read secondary dir backup: {backup_path}")
+            return None
+        root = tree.getroot()
+        app_path = root.findtext("app_path")
+        if app_path is None:
+            DAOUtils.log_message(f"Warning: App path missing from secondary dir backup: {backup_path}")
+            return None
+        data: dict[str, str | list[str]] = {"app_path": app_path}
+        for dir_elem in root:
+            key = dir_elem.tag
+            if key == "app_path":
+                continue
+            file_list = [f.text for f in dir_elem.findall("file") if f.text]
+            data[key] = file_list
+        return data 
+    
+    @staticmethod
+    def _get_backup_path() -> str:
+        return DAOUtils.os_path(DAOLaunch.SECONDARY_DIR_BACKUP)
+
+    @staticmethod
+    def _get_deploy_dir(path_dict: dict[str, str], value: tuple[str, str]) -> str | None:
+        path_key = value[0]
+        base_path = path_dict[path_key]
+        rel_path = value[1]
+        deploy_path = DAOUtils.os_path(base_path, rel_path)
+        if not os.path.isdir(deploy_path):
+            return None
+        return deploy_path
+
+    @staticmethod
+    def _write_backup_xml(path: str, data: dict[str, str | list[str]]) -> bool:
+        """Write a secondary backup to XML."""
+        root = ET.Element("SecondaryDirs")
+        for key, value in data.items():
+            elem = ET.SubElement(root, key)
+            # app_path
+            if isinstance(value, str):
+                elem.text = value
+                continue
+            # secondary dirs
+            for item in value:
+                file_elem = ET.SubElement(elem, "file")
+                file_elem.text = item
+        xml_str = ET.tostring(root, encoding="unicode")
+        xml_bytes = DAOUtils.pretty_format_xml(xml_str)
+        return DAOUtils.write_file_bytes(path, xml_bytes)
+    
+    @staticmethod
+    def _move_secondary_files(dir_name: str, deploy_dir: str, organizer: mobase.IOrganizer, deploy: bool) -> bool:
+        """Move files to and from deploy dir"""
+        vfs_tree = organizer.virtualFileTree()
+        dir_tree = vfs_tree.find(dir_name, mobase.IFileTree.FileTypes.DIRECTORY)
+        if not isinstance(dir_tree, mobase.IFileTree):
+            return True
+        for entry in DAOUtils.walk_tree(dir_tree):
             if entry.isDir():
                 continue
             file_path = entry.pathFrom(vfs_tree)
             src_path = organizer.resolvePath(file_path)
-            dst_path = DAOUtils.os_path(game_dir, file_path)
-            if os.path.exists(dst_path):
-                if deploy:
+            rel_path = os.path.relpath(file_path, dir_name)
+            dst_path = DAOUtils.os_path(deploy_dir, rel_path)
+            if deploy:
+                if DAOUtils.file_exists(dst_path):
                     if not DAOUtils.create_backup(dst_path):
                         return False
-                else:
-                    if not DAOUtils.restore_backup(dst_path):
-                        if not DAOUtils.remove_file(dst_path):
-                            return False
-            if deploy and not DAOUtils.copy_file(src_path, dst_path):
-                return False       
+                if not DAOUtils.copy_file(src_path, dst_path):
+                    return False
+            else:
+                if DAOUtils.restore_backup(dst_path):
+                    continue
+                if not DAOUtils.remove_file(dst_path):
+                    return False
         return True
-    
-    @staticmethod
-    def clean_bin_ship(bin_ship: str, overwrite: str, before: set[str], after: set[str]) -> bool:
-        """Remove any untracked files from bin_ship."""
-        paths = after - before
-        for path in paths:
-            src_path = DAOUtils.os_path(bin_ship, path)
-            dst_path = DAOUtils.os_path(overwrite, "bin_ship", path)
-            if not DAOUtils.move_file_overwrite_dirs(src_path, dst_path):
-                return False
-        return True
-
+       
     #######################################
     ### Build Addins.xml and Offers.xml ###
     #######################################
@@ -81,7 +242,7 @@ class DAOLaunch:
 
             xml_gold = DAOUtils.os_path("plugins/basic_games/games/dao_game", f"DAO_{mod_type}.xml")
 
-            if os.path.exists(xml_gold):
+            if DAOUtils.file_exists(xml_gold):
                 root = ET.parse(xml_gold).getroot()
             else:
                 root = ET.Element(list_tag)   
@@ -107,7 +268,7 @@ class DAOLaunch:
     ### Build Chargenmorphcfg.xml  ###
     ##################################
     @staticmethod
-    def build_chargenmorph(target_dir: str, game_dir: str, organizer: mobase.IOrganizer) -> bool:
+    def build_chargenmorphcfg_xml(target_dir: str, game_dir: str, organizer: mobase.IOrganizer) -> bool:
         """Dynamically build Chargenmorphcfg.xml based on contents of override dir"""
         DAOUtils.log_message(f"Building Chargenmorphcfg.xml...")
         ovrd_path = "packages/core/override"
