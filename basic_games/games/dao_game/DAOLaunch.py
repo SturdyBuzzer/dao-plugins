@@ -3,8 +3,6 @@ import os
 
 from xml.etree import ElementTree as ET
 
-from PyQt6.QtWidgets import QMessageBox
-
 from .DAOChargen import DAOChargen
 from .DAOUtils import DAOUtils
 
@@ -34,10 +32,10 @@ class DAOLaunch:
         for key, value in dir_dict.items():
             deploy_dir = DAOLaunch._get_deploy_dir(path_dict, value)
             if deploy_dir is None:
+                DAOUtils.log_message(f"No matching dir found for: {value}.")
                 continue
             DAOUtils.log_message(f"Deploying {key} files to: {deploy_dir}")
             if not DAOLaunch._move_secondary_files(key, deploy_dir, organizer, True):
-                DAOUtils.log_message(f"Warning: Failed to deploy to secondary dirs!")
                 return False      
         return True
 
@@ -62,11 +60,17 @@ class DAOLaunch:
         if not DAOUtils.file_exists(backup_path):
             return True
         DAOUtils.log_message(f"Warning: Mod Organizer 2 may have crashed while game was running.")
-        QMessageBox.warning(None, "Warning!", (
-            f"Mod Organizer 2 may have crashed during gameplay!<br><br>"
-            "Please check bin_ship dir.<br><br>"
-            f"Backup file: {backup_path}.<br><br>"
-            ))
+        DAOUtils.show_message_box(
+            header = "Warning!", 
+            message = [
+                f"Mod Organizer 2 may have shutdown during gameplay!<br><br>",
+                "Please check bin_ship dir.<br><br>",
+                f"Backup file: {backup_path}.<br><br>",
+            ],
+            link = f"file:///{path_dict["game_dir"]}/bin_ship",
+            link_name = "-- bin_ship Directory --",            
+            warning = True,
+            )
         # Read in snapshot of each secondary dir
         data = DAOLaunch._read_secondary_dir_list()
         if data is None:
@@ -197,10 +201,14 @@ class DAOLaunch:
             rel_path = os.path.relpath(file_path, dir_name)
             dst_path = DAOUtils.os_path(deploy_dir, rel_path)
             if deploy:
+                backup = False
                 if DAOUtils.file_exists(dst_path):
                     if not DAOUtils.create_backup(dst_path):
                         return False
+                    backup = True
                 if not DAOUtils.copy_file(src_path, dst_path):
+                    if backup:
+                        DAOUtils.restore_backup(dst_path)
                     return False
             else:
                 if DAOUtils.restore_backup(dst_path):
@@ -220,7 +228,9 @@ class DAOLaunch:
 
     @staticmethod
     def build_addins_offers_xml(target_dir: str, game_dir: str, organizer: mobase.IOrganizer) -> bool:
-        """Build Addins.xml and Offers.xml"""  
+        """Build Addins.xml and Offers.xml"""
+        profile = organizer.profile()
+        profile_dir = profile.absolutePath()
         for mod_type, (item_tag, list_tag) in DAOLaunch._xml_tags.items():
             
             DAOUtils.log_message(f"Building {mod_type}.xml...")
@@ -258,8 +268,25 @@ class DAOLaunch:
             xml_str = xml_str.replace('RequiresAuthorization="1"','RequiresAuthorization="0"')         
             xml_bytes = DAOUtils.pretty_format_xml(xml_str)
             xml_path = DAOUtils.os_path(target_dir, "Settings", f"{mod_type}.xml")
-            if not DAOUtils.write_file_bytes(xml_path, xml_bytes):
-                return False
+            backup = False
+            if DAOUtils.file_exists(xml_path):
+                if not DAOUtils.create_backup(xml_path):
+                    return False
+                backup = True
+            if DAOUtils.write_file_bytes(xml_path, xml_bytes):
+                if profile.localSettingsEnabled():
+                    link_path = DAOUtils.os_path(profile_dir, f"{mod_type}.xml")
+                    link_backup = False
+                    if DAOUtils.file_exists(link_path):
+                        if not DAOUtils.create_backup(link_path):
+                            DAOUtils.restore_backup(xml_path) if backup else DAOUtils.remove_file(xml_path)
+                            return False
+                        link_backup = True
+                    if DAOUtils.create_link(xml_path, link_path, True):
+                        continue 
+                    DAOUtils.restore_backup(xml_path) if backup else DAOUtils.remove_file(xml_path)
+                    DAOUtils.restore_backup(link_path) if link_backup else DAOUtils.remove_link(link_path, True)
+                    return False 
         return True
 
 
@@ -303,7 +330,10 @@ class DAOLaunch:
         xml_string = ET.tostring(chargenmorph, encoding="unicode")
         xml_bytes = DAOUtils.pretty_format_xml(xml_string)
         xml_path = DAOUtils.os_path(target_dir, ovrd_path, "chargenmorphcfg.xml")
-        return DAOUtils.write_file_bytes(xml_path, xml_bytes)
+        if not DAOUtils.write_file_bytes(xml_path, xml_bytes):
+            DAOLaunch.hide_files("chargenmorphcfg.xml", game_dir, organizer, ovrd_path, True)
+            return False
+        return True
 
     @staticmethod
     def get_file_paths(file_name: str, game_dir: str, organizer: mobase.IOrganizer, search_path: str,) -> list[str]:

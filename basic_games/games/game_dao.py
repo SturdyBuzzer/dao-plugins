@@ -74,8 +74,9 @@ class DAOriginsGame(BasicGame):
     ### ini Files ###
     #################   
     def iniFiles(self):
-        return ["DAOriginsConfig.ini", "DragonAge.ini",
-            "KeyBindings.ini", "Profile.dap"]
+        return ["DragonAge.ini", "KeyBindings.ini",
+            "Addins.xml", "Offers.xml",
+            "DAOriginsConfig.ini",]
     
     ###################
     ### Executables ###
@@ -303,17 +304,35 @@ class DAOriginsGame(BasicGame):
         game_dir = self.gameDirectory().absolutePath()
         overwrite = self._organizer.overwritePath()
         DAOUtils.log_message(f"Game launch detected: {app_path}")
+        show_warning = False
         # Deploy bin files to game directory
         if self._get_setting("deploy_bin_ship"):
-            DAOLaunch.deploy_secondary_files(app_path, self._path_dict, self._organizer)
+            if not DAOLaunch.deploy_secondary_files(app_path, self._path_dict, self._organizer):
+                DAOUtils.log_message(f"Warning: Failed to deploy to bin_ship dir!")
+                show_warning = True
         # Build Addins.xml and Offers.xml
-        if self._get_setting("build_addins_offers_xml"):
+        if self._get_setting("build_addins_offers_xml"):        
             if not DAOLaunch.build_addins_offers_xml(overwrite, game_dir, self._organizer):
-                DAOUtils.log_message(f"Failed to build Addins.xml and/or Offers.xml")
+                DAOUtils.log_message(f"Warning: Failed to build Addins.xml and/or Offers.xml")
+                show_warning = True
         # Build Chargenmorph.xml
         if self._get_setting("build_chargenmorphcfg_xml"):
             if not DAOLaunch.build_chargenmorphcfg_xml(overwrite, game_dir, self._organizer):
-                DAOUtils.log_message(f"Failed to build Chargenmorphcfg.xml")
+                ovrd_path = "packages/core/override"
+                DAOLaunch.hide_files("chargenmorphcfg.xml", game_dir, self._organizer, ovrd_path, True)
+                DAOUtils.log_message(f"Warning: Failed to build Chargenmorphcfg.xml")
+                show_warning = True
+        if show_warning:
+            DAOUtils.show_message_box(
+                header = "Warning!", 
+                message = [
+                    f"Something went wrong during game launch!<br><br>",
+                    "Please see MO2 logs for more info.",
+                ],
+                link = f"file:///{self._path_dict["base_dir"]}/logs",
+                link_name = "-- Log Directory --",
+                warning = True,
+                )
         DAOUtils.log_message(f"Launching Game...")
         return True
 
@@ -322,24 +341,55 @@ class DAOriginsGame(BasicGame):
         if not self._is_game_triggered(app_path):
             return
         overwrite = self._organizer.overwritePath()
+        profile = self._organizer.profile()
+        profile_dir = profile.absolutePath()
         DAOUtils.log_message(f"Game stop detected: {app_path}")
+        show_warning = False
         # Restore bin files in game directory
         if self._get_setting("deploy_bin_ship"):
             DAOUtils.log_message(f"Recovering bin_ship to previous state.")
-            DAOLaunch.recover_secondary_dirs(app_path, self._path_dict, self._organizer)
+            if not DAOLaunch.recover_secondary_dirs(app_path, self._path_dict, self._organizer):
+                show_warning = True
         # Restore Addins.xml and Offers.xml
         if self._get_setting("build_addins_offers_xml"):
             for mod_type in ("Addins", "Offers"):
+                if profile.localSettingsEnabled():
+                    link_path = DAOUtils.os_path(profile_dir, f"{mod_type}.xml")
+                    DAOUtils.log_message(f"Removing links.")
+                    if not DAOUtils.restore_backup(link_path):
+                        if DAOUtils.remove_link(link_path, True):
+                            continue
+                        DAOUtils.log_message(f"Warning: Failed to restore profile dir: {profile_dir}.")
+                        show_warning = True
+                DAOUtils.log_message(f"Restoring Addins.xml/Offers.xml.")
                 xml_path = DAOUtils.os_path(overwrite, "Settings", f"{mod_type}.xml")
-                DAOUtils.remove_file(xml_path)
+                if not DAOUtils.restore_backup(xml_path):
+                    if DAOUtils.remove_file(xml_path):
+                        continue
+                    DAOUtils.log_message(f"Warning: Failed to restore overwrite dir: {overwrite}.")
+                    show_warning = True
         # Restore Chargenmorph.xml
         if self._get_setting("build_chargenmorphcfg_xml"):
             ovrd_path = "packages/core/override"
             game_dir = self.gameDirectory().absolutePath()
             chargen_path = DAOUtils.os_path(overwrite, ovrd_path, "Chargenmorphcfg.xml")
-            DAOLaunch.hide_files("chargenmorphcfg.xml", game_dir, self._organizer, ovrd_path, True)
-            DAOUtils.remove_file(chargen_path)
+            DAOUtils.log_message(f"Restoring chargenmorphcfg.xml.")
+            if not DAOLaunch.hide_files("chargenmorphcfg.xml", game_dir, self._organizer, ovrd_path, True):
+                show_warning = True
+            if not DAOUtils.remove_file(chargen_path):
+                show_warning = True
         DAOUtils.remove_empty_subdirs(overwrite)
+        if show_warning:
+            DAOUtils.show_message_box(
+                header = "Warning!", 
+                message = [
+                    f"Something went wrong during game launch restore!<br><br>",
+                    "Please see MO2 logs for more info:<br><br>",
+                ],
+                link = f"file:///{self._path_dict["base_dir"]}/logs",
+                link_name = "-- Log Directory --",
+                warning = True,
+                )
 
     def _handle_user_interface_initialized(self, ui: QMainWindow) -> None:
         """Event Handler for onUserInterfaceInitialized"""

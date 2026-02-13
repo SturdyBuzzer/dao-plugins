@@ -92,7 +92,28 @@ class DAOUtils:
             return False
         dst = f"{src}.mohidden"
         return DAOUtils.copy_file(src, dst)
-       
+
+    @staticmethod
+    def create_link(target: str, link: str, force: bool) -> bool:
+        """"Link src file to dst."""
+        try:
+            if os.path.lexists(link):
+                if force:
+                    os.remove(link)
+                else:
+                    DAOUtils.log_message(f"Failed to create link at {link}: File exists.")
+                    return False
+            try:
+                os.symlink(target, link)
+                DAOUtils.log_message(f"Created symlink: {link} -> {target}.")
+            except OSError:
+                os.link(target, link)
+                DAOUtils.log_message(f"Created hard-link: {link} -> {target}.")
+        except Exception as e:
+            DAOUtils.log_message(f"Failed to create symlink {link} -> {target}: {e}.")
+            return False
+        return True
+              
     @staticmethod 
     def extract_archive(src: str, dst: str, delete: bool = True) -> bool:
         """Extract archive at src to dst, and remove the archive if successful."""
@@ -266,6 +287,25 @@ class DAOUtils:
                     result = False
         return result
 
+    @staticmethod
+    def remove_link(link: str, force: bool) -> bool:
+        """"Remove link."""
+        try:
+            try:
+                os.unlink(link)
+                DAOUtils.log_message(f"Removed symlink: {link}.")
+            except OSError:
+                if force:
+                    os.remove(link)
+                    DAOUtils.log_message(f"Force-removed hard-link {link}.")
+                else:
+                    DAOUtils.log_message(f"Failed to remove link {link}: Not a valid symlink!")
+                    return False
+        except Exception as e:
+            DAOUtils.log_message(f"Failed to remove link {link}: {e}.")
+            return False
+        return True
+        
     @staticmethod 
     def restore_backup(dst: str) -> bool:
         src = f"{dst}.mohidden"
