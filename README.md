@@ -60,6 +60,7 @@
 * On launch, the plugin deploys any files in `%Mods_Path%\<mod name>\bin_ship` into the game’s `%GAME_DIR%\bin_ship`.
 * Useful for DXVK, DAFix, script extenders, etc.
 * Restores the `bin_ship` directory when the game stops.
+* Warning: The Rootbuilder plugin is **Not Compatible** (and not neccessary) with this feature.
 
 ### Configurable Override Modes
 
@@ -79,8 +80,13 @@
 
 ### Save Game Management
 
-* Extends MO2’s **profile-local save games** to DAO saves.
+* Extends MO2’s **profile-specific save games** to DAO saves.
 * View DAO savegame metadata in MO2’s Saves tab.
+
+### Settings file Management
+
+* Extends MO2’s **profile-specific Game INI** to DAO config files.
+* View DAO configs in MO2’s INI Editor.
 
 ---
 

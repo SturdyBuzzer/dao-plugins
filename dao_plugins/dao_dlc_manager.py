@@ -32,7 +32,7 @@ class DAODLCManager(mobase.IPluginTool):
         "Download and install DLC.<br>"
         "Convert DLC to MO2 managed mods.<br>"
     )
-    VERSION = "1.0.0"
+    VERSION = "1.0.1"
     SUPPORTURL = "https://www.nexusmods.com/dragonage/mods/6725"
 
     ##################################
