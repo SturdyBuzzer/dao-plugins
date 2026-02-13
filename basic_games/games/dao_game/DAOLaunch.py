@@ -229,8 +229,6 @@ class DAOLaunch:
     @staticmethod
     def build_addins_offers_xml(target_dir: str, game_dir: str, organizer: mobase.IOrganizer) -> bool:
         """Build Addins.xml and Offers.xml"""
-        profile = organizer.profile()
-        profile_dir = profile.absolutePath()
         for mod_type, (item_tag, list_tag) in DAOLaunch._xml_tags.items():
             
             DAOUtils.log_message(f"Building {mod_type}.xml...")
@@ -274,20 +272,29 @@ class DAOLaunch:
                     return False
                 backup = True
             if DAOUtils.write_file_bytes(xml_path, xml_bytes):
-                if profile.localSettingsEnabled():
-                    link_path = DAOUtils.os_path(profile_dir, f"{mod_type}.xml")
-                    link_backup = False
-                    if DAOUtils.file_exists(link_path):
-                        if not DAOUtils.create_backup(link_path):
-                            DAOUtils.restore_backup(xml_path) if backup else DAOUtils.remove_file(xml_path)
-                            return False
-                        link_backup = True
-                    if DAOUtils.create_link(xml_path, link_path, True):
-                        continue 
-                    DAOUtils.restore_backup(xml_path) if backup else DAOUtils.remove_file(xml_path)
-                    DAOUtils.restore_backup(link_path) if link_backup else DAOUtils.remove_link(link_path, True)
-                    return False 
+                if DAOLaunch._create_profile_links(mod_type, xml_path, organizer):
+                    return True
+            DAOUtils.restore_backup(xml_path) if backup else DAOUtils.remove_file(xml_path)
+            return False
         return True
+    
+    @staticmethod
+    def _create_profile_links(mod_type: str, xml_path: str, organizer: mobase.IOrganizer) -> bool:
+        """Creates addins.xml/offers.xml link from profile when profile-specific Game INI is enabled"""
+        profile = organizer.profile()
+        profile_dir = profile.absolutePath()
+        if not profile.localSettingsEnabled():
+            return True
+        link_path = DAOUtils.os_path(profile_dir, f"{mod_type}.xml")
+        link_backup = False
+        if DAOUtils.file_exists(link_path):
+            if not DAOUtils.create_backup(link_path):
+                return False
+            link_backup = True
+        if DAOUtils.create_link(xml_path, link_path, True):
+            return True
+        DAOUtils.restore_backup(link_path) if link_backup else DAOUtils.remove_link(link_path, True)
+        return False       
 
 
     ##################################
@@ -370,7 +377,7 @@ class DAOLaunch:
 
     @staticmethod
     def move_save_game_files(profile: mobase.IProfile, path_dict: dict[str, str]) -> bool:
-        """ Move any save files in the overwrite dir back to saves dir"""
+        """Move any save files in the overwrite dir back to saves dir"""
         overwrite = f"{path_dict["overwrite"]}/Characters"
         if profile.localSavesEnabled():
             saves_dir = f"{profile.absolutePath()}/saves"
