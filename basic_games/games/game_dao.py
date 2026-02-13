@@ -3,6 +3,8 @@ import mobase
 from pathlib import Path
 from xml.etree import ElementTree as ET
 
+from PyQt6.QtWidgets import QMainWindow
+
 from ..basic_features import BasicLocalSavegames, BasicGameSaveGameInfo
 from ..basic_game import BasicGame
 
@@ -49,15 +51,25 @@ class DAOriginsGame(BasicGame):
         organizer.modList().onModInstalled(self._handle_modInstalled)
         organizer.onAboutToRun(self._handle_aboutToRun)
         organizer.onFinishedRun(self._handle_finishedRun)
+        organizer.onUserInterfaceInitialized(self._handle_user_interface_initialized)
         
         # Make DAO IOrganizer available to event handlers
         self._organizer = organizer
+
+        # Make common paths available
+        self._path_dict = {
+            "base_dir"  : self._organizer.basePath(),
+            "data_dir"  : self.dataDirectory().absolutePath(),
+            "docs_dir"  : self.documentsDirectory().absolutePath(),
+            "game_dir"  : self.gameDirectory().absolutePath(),
+            "saves_dir" : self.savesDirectory().absolutePath(),
+            }
 
         # Init DAOUtils for logging
         DAOUtils.setup_utils(organizer, self.name())
 
         return True   
-    
+       
     #################
     ### ini Files ###
     #################   
@@ -211,7 +223,7 @@ class DAOriginsGame(BasicGame):
                 "Class"        : self._class_dict[root_dict["Class"]],
                 "Level"        : root_dict["Level"],
                 "Origin"       : self._origin_dict[root_dict["Origin"]],
-                #"Area"         : root_dict["Area"],
+                #"Area"         : root_dict["Area"], # Note: Doesn't work well with DLC, etc.
                 })
         
         story_path = save_path.parent.joinpath(f"{char_path.name}_Story.xml")
@@ -278,6 +290,7 @@ class DAOriginsGame(BasicGame):
             DAOInstall.warn_install_failed(mod_name)
 
     # On game launch:
+    # - Deploy bin_ship
     # - Build addins.xml 
     # - Build offers.xml 
     # - Build chargenmorphcfg.xml
@@ -290,19 +303,16 @@ class DAOriginsGame(BasicGame):
         game_dir = self.gameDirectory().absolutePath()
         overwrite = self._organizer.overwritePath()
         DAOUtils.log_message(f"Game launch detected: {app_path}")
-        # Move bin_ship files to game root
+        # Deploy bin files to game directory
         if self._get_setting("deploy_bin_ship"):
-            bin_ship = DAOUtils.os_path(game_dir, "bin_ship")
-            self._bin_list = DAOUtils.list_files(bin_ship)
-            if not DAOLaunch.deploy_bin_ship(game_dir, self._organizer, True):
-                DAOUtils.log_message(f"Deploy to bin_ship failed.")
+            DAOLaunch.deploy_secondary_files(app_path, self._path_dict, self._organizer)
         # Build Addins.xml and Offers.xml
         if self._get_setting("build_addins_offers_xml"):
             if not DAOLaunch.build_addins_offers_xml(overwrite, game_dir, self._organizer):
                 DAOUtils.log_message(f"Failed to build Addins.xml and/or Offers.xml")
         # Build Chargenmorph.xml
         if self._get_setting("build_chargenmorphcfg_xml"):
-            if not DAOLaunch.build_chargenmorph(overwrite, game_dir, self._organizer):
+            if not DAOLaunch.build_chargenmorphcfg_xml(overwrite, game_dir, self._organizer):
                 DAOUtils.log_message(f"Failed to build Chargenmorphcfg.xml")
         DAOUtils.log_message(f"Launching Game...")
         return True
@@ -313,15 +323,10 @@ class DAOriginsGame(BasicGame):
             return
         overwrite = self._organizer.overwritePath()
         DAOUtils.log_message(f"Game stop detected: {app_path}")
-        # Restore bin_ship
+        # Restore bin files in game directory
         if self._get_setting("deploy_bin_ship"):
-            game_dir = self.gameDirectory().absolutePath()
-            if not DAOLaunch.deploy_bin_ship(game_dir, self._organizer, False):
-                DAOUtils.log_message(f"Deploy bin_ship (reverse) failed.")
-            bin_ship = DAOUtils.os_path(game_dir, "bin_ship")
-            bin_list = DAOUtils.list_files(bin_ship)
-            if not DAOLaunch.clean_bin_ship(bin_ship, overwrite, self._bin_list, bin_list):
-                DAOUtils.log_message(f"Clean bin_ship failed.")
+            DAOUtils.log_message(f"Recovering bin_ship to previous state.")
+            DAOLaunch.recover_secondary_dirs(app_path, self._path_dict, self._organizer)
         # Restore Addins.xml and Offers.xml
         if self._get_setting("build_addins_offers_xml"):
             for mod_type in ("Addins", "Offers"):
@@ -335,7 +340,13 @@ class DAOriginsGame(BasicGame):
             DAOLaunch.hide_files("chargenmorphcfg.xml", game_dir, self._organizer, ovrd_path, True)
             DAOUtils.remove_file(chargen_path)
         DAOUtils.remove_empty_subdirs(overwrite)
-        
+
+    def _handle_user_interface_initialized(self, ui: QMainWindow) -> None:
+        """Event Handler for onUserInterfaceInitialized"""
+        # Recover bin dir if persisted bin list exists
+        if self._get_setting("deploy_bin_ship"):
+            DAOLaunch.check_secondary_status(self._path_dict, self._organizer)
+
     # Check that the triggered app is the game itself
     def _is_game_triggered(self, app_path: str) -> bool:
         """Check if triggered process is the game."""
