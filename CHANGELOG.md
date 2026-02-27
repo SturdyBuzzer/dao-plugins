@@ -1,4 +1,8 @@
 # Changelog
+## v0.2.7
+- Now able to detect conflicts across the entire data dir, or optionally just the override dir.
+- This will allow users to see where override files ar conflicting with files from installed dazip mod files.
+- Includes contents of .erf files.
 
 ## v0.2.6
 - Hotfix - Offers.xml generation was being skipped on game launch
