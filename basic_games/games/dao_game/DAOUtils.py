@@ -148,7 +148,17 @@ class DAOUtils:
     @staticmethod 
     def get_ext(filename:str) -> str:
         return filename.rsplit(".", 1)[1]
-    
+
+    @staticmethod
+    def get_rel_path(path: str, base: str) -> str | None:
+        "Get a string path relative to the base path"
+        try:
+            return os.path.relpath(path, base)
+        except ValueError:
+            return path
+        except Exception as e:
+            DAOUtils.log_message(f"Failed to get relative path for {path} from {base}: {e}")
+
     @staticmethod 
     def list_files(path: str) -> set[str]:
         """"List all files in a directory"""
@@ -157,7 +167,9 @@ class DAOUtils:
             return file_list
         for root, _, files in os.walk(path):
             for file in files:
-                rel_path = os.path.relpath(root, path)
+                rel_path = DAOUtils.get_rel_path(root, path)
+                if rel_path is None:
+                    continue
                 file_path = DAOUtils.os_path(rel_path, file)
                 file_list.add(file_path)
         return file_list    
@@ -205,7 +217,9 @@ class DAOUtils:
             return False
         for root, _, files in os.walk(src_dir):
             for file in files:
-                rel_path = os.path.relpath(root, src_dir)
+                rel_path = DAOUtils.get_rel_path(root, src_dir)
+                if rel_path is None:
+                    continue
                 src = DAOUtils.os_path(src_dir, rel_path, file)
                 dst = DAOUtils.os_path(dst_dir, rel_path, file)
                 if DAOUtils.move_file_overwrite_dirs(src, dst):
@@ -321,7 +335,9 @@ class DAOUtils:
             for file in files:
                 if file.casefold() != filename.casefold():
                     continue
-                rel_path = os.path.relpath(root, dir_name)
+                rel_path = DAOUtils.get_rel_path(root, dir_name)
+                if rel_path is None:
+                    continue
                 file_path = DAOUtils.os_path(dir_name, rel_path, file)
                 result.append(file_path)
         return result

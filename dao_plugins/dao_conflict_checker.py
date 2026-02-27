@@ -25,7 +25,7 @@ class DAOConflictChecker(mobase.IPluginTool):
     TOOLTIP = (
         f"Detects conflicts in Dragon Age: Origins data directory.<br>"
     )
-    VERSION = "1.0.1"
+    VERSION = "1.0.2"
     SUPPORTURL = "https://www.nexusmods.com/dragonage/mods/6725"
 
     ##################################
@@ -169,8 +169,8 @@ class DAOConflictChecker(mobase.IPluginTool):
         # QTreeWidget
         self._tree = QTreeWidget()
         tree = self._tree
-        tree.setHeaderLabels(["Filename", "Conflicting Paths"])
-        tree.setColumnCount(2)
+        tree.setHeaderLabels(["File Name", "Mod Name", "File Path"])
+        tree.setColumnCount(3)
         tree.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         tree.setUniformRowHeights(False)
 
@@ -178,8 +178,10 @@ class DAOConflictChecker(mobase.IPluginTool):
     
         header = tree.header()
         if header is not None:
-            header.setSectionResizeMode(0, header.ResizeMode.ResizeToContents)
-            header.setSectionResizeMode(1, header.ResizeMode.Interactive)
+            header.setMinimumSectionSize(180)
+            for index in (0, 1, 2):
+                header.setSectionResizeMode(index, header.ResizeMode.Interactive)
+                
         
         tree.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         tree.customContextMenuRequested.connect(self._set_context_menu)
@@ -218,9 +220,10 @@ class DAOConflictChecker(mobase.IPluginTool):
         tree.clear()
         show_full_paths = self._get_setting("show_full_paths")
         conflict_dict = self._scan_conflict_dir()
-        conflict_path = f"{self._get_conflict_root()}"
-        if conflict_path not in ("", "."):
-            conflict_path = f"{conflict_path}/"
+        conflict_root = f"{self._get_conflict_root()}"
+        mods_path = self._organizer.modsPath()
+        if conflict_root not in ("", "."):
+            conflict_root = f"{conflict_root}/"
         for file, paths in conflict_dict.items():
             if len(paths) <= 1:
                 continue
@@ -237,10 +240,17 @@ class DAOConflictChecker(mobase.IPluginTool):
                 else:
                     res_path, file = path.rsplit(" -> ", 1)
                     erf = f" -> {file}" if bool(show_full_paths) else ""
-                path = self._organizer.resolvePath(f"{conflict_path}{res_path}").casefold() if bool(show_full_paths) else path
-                child = QTreeWidgetItem(["", f"{symbol} {path}{erf}"])
-                color = QColor("green") if symbol == "+" else QColor("red")
-                child.setForeground(1, color)
+                full_path = self._organizer.resolvePath(f"{conflict_root}{res_path}").casefold()
+                rel_path = DAOUtils.get_rel_path(full_path, mods_path)
+                if rel_path in (full_path, None):
+                    mod_name = "<Unmanaged>"
+                else:
+                    mod_name = rel_path.split('\\')[0]
+                path = full_path if bool(show_full_paths) else path
+                child = QTreeWidgetItem(["", f"{mod_name}", f"{symbol} {path}{erf}"])
+                color = QColor("lightgreen") if symbol == "+" else QColor("red")
+                for index in (1, 2):
+                    child.setForeground(index, color)
                 parent.addChild(child)
             tree.addTopLevelItem(parent)
         tree.expandAll()
@@ -255,14 +265,14 @@ class DAOConflictChecker(mobase.IPluginTool):
         organizer = self._organizer
         vfs_tree = organizer.virtualFileTree()
         isRoot = False
-        conflict_path = f"{self._get_conflict_root()}"
-        if conflict_path in ("", "."):
+        conflict_root = f"{self._get_conflict_root()}"
+        if conflict_root in ("", "."):
             isRoot = True
             conflict_tree = vfs_tree
-            conflict_path = ""
+            conflict_root = ""
         else:
-            conflict_tree = vfs_tree.find(conflict_path, mobase.IFileTree.FileTypes.DIRECTORY)
-            conflict_path = f"{conflict_path}/"
+            conflict_tree = vfs_tree.find(conflict_root, mobase.IFileTree.FileTypes.DIRECTORY)
+            conflict_root = f"{conflict_root}/"
         if not isinstance(conflict_tree, mobase.IFileTree):
             return {}
         file_dict: dict[str, list[str]] = {}
@@ -279,7 +289,7 @@ class DAOConflictChecker(mobase.IPluginTool):
             if not name.endswith(".erf"):
                 file_dict.setdefault(name, []).append(rel_path)
                 continue
-            file_path = self._organizer.resolvePath(f"{conflict_path}{rel_path}")
+            file_path = self._organizer.resolvePath(f"{conflict_root}{rel_path}")
             erf_list = DAOUtils.get_erf_paths(name, file_path)
             for name in erf_list:
                 path = f"{rel_path } -> {name.casefold()}"
