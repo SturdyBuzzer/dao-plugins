@@ -131,11 +131,12 @@
 
 *(Tools → Dragon Age: Origins – Conflict Checker)*
 
-* Scans MO2’s virtual `packages\core\override` directory for file-name conflicts.
+* Scans MO2’s virtual directory for file-name conflicts.
 * Also checks inside Bioware’s `.erf` archives.
 * Displays results in a **separate window** for reference while adjusting load order.
 * Auto-refreshes after changes for **real-time conflict resolution**.
-* Options to show full or relative paths.
+* Option to show full or relative paths.
+* Option to show only conflicts in override directory.
 * Paths can be copied to clipboard.
 * Customizable font size.
   *(Settings → Plugins → Dragon Age: Origins – Conflict Checker → `font_point_size`)*
@@ -146,6 +147,7 @@
   * Collapse All
   * Refresh View
   * Toggle Full Paths
+  * Toggle Override Only
 
 ---
 
