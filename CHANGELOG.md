@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.2.6
+- Hotfix - Offers.xml generation was being skipped on game launch
+
 ## v0.2.5
 - General cleanup and better error handling
 **feature/manage_configs**
