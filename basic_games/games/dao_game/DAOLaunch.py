@@ -273,7 +273,7 @@ class DAOLaunch:
                 backup = True
             if DAOUtils.write_file_bytes(xml_path, xml_bytes):
                 if DAOLaunch._create_profile_links(mod_type, xml_path, organizer):
-                    return True
+                    continue
             DAOUtils.restore_backup(xml_path) if backup else DAOUtils.remove_file(xml_path)
             return False
         return True
