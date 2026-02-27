@@ -15,14 +15,15 @@ class DAOConflictChecker(mobase.IPluginTool):
     #################
     ## Plugin Meta ##
     #################
+
     AUTHOR = "SturdyBuzzer"
-    DESCRIPTION = "Detects conflicts in Dragon Age: Origins packages/core/override directory."
+    DESCRIPTION = f"Detects conflicts in Dragon Age: Origins data directory."
     DISPLAYNAME = "Dragon Age: Origins - Conflict Checker"
     GAMENAME = "dragonage"
     ICON_PATH = "plugins/dao_plugins/dao.ico"
     NAME = "DAO Conflict Checker"
     TOOLTIP = (
-        "Detects conflicts in Dragon Age: Origins packages/core/override directory.<br>"
+        f"Detects conflicts in Dragon Age: Origins data directory.<br>"
     )
     VERSION = "1.0.0"
     SUPPORTURL = "https://www.nexusmods.com/dragonage/mods/6725"
@@ -89,12 +90,20 @@ class DAOConflictChecker(mobase.IPluginTool):
                 "show_full_paths",
                 (
                     f"Toggles display of the full os path for conflicting files.<br>"
-                    f"Default is relative to packages/core/override.<br>"
+                    f"Default is relative to conflict root dir.<br>"
                 ),
                 False,
-            )
+            ),
+            mobase.PluginSetting(
+                "override_only",
+                (
+                    f"Toggles whether to only show conflicts between files in override.<br>"
+                    f"Default (False) will show conflicts among all relevant data files.<br>"
+                ),
+                False,
+            ),            
         ]
-    
+        
     def tooltip(self) -> str:
         return self.tr(self.TOOLTIP)
     
@@ -133,7 +142,7 @@ class DAOConflictChecker(mobase.IPluginTool):
         DAOUtils.log_message(f"Setting: {setting} changed from {old} to {new}")
         if setting == "font_point_size":
             self._set_font_size()
-        elif setting == "show_full_paths":
+        elif setting in ("show_full_paths", "override_only"):
             self._fill_conflict_tree()
 
     ###########################################
@@ -195,12 +204,23 @@ class DAOConflictChecker(mobase.IPluginTool):
         dialog.setWindowFlags(dialog.windowFlags() | Qt.WindowType.WindowMinMaxButtonsHint)
         dialog.show()
 
+    def _get_conflict_root(self) -> str:
+        """Set the root dir for conflict detection"""
+        res = ""
+        setting = bool(self._get_setting("override_only"))
+        if setting:
+            res = "packages/core/override"
+        return res
+
     def _fill_conflict_tree(self):
         """Checks file paths for conflicts and adds to display tree"""
         tree = self._tree
         tree.clear()
         show_full_paths = self._get_setting("show_full_paths")
-        conflict_dict = self._scan_override_dir()
+        conflict_dict = self._scan_conflict_dir()
+        conflict_path = f"{self._get_conflict_root()}"
+        if conflict_path not in ("", "."):
+            conflict_path = f"{conflict_path}/"
         for file, paths in conflict_dict.items():
             if len(paths) <= 1:
                 continue
@@ -217,7 +237,7 @@ class DAOConflictChecker(mobase.IPluginTool):
                 else:
                     res_path, file = path.rsplit(" -> ", 1)
                     erf = f" -> {file}" if bool(show_full_paths) else ""
-                path = self._organizer.resolvePath(f"packages/core/override/{res_path}").casefold() if bool(show_full_paths) else path
+                path = self._organizer.resolvePath(f"{conflict_path}{res_path}").casefold() if bool(show_full_paths) else path
                 child = QTreeWidgetItem(["", f"{symbol} {path}{erf}"])
                 color = QColor("green") if symbol == "+" else QColor("red")
                 child.setForeground(1, color)
@@ -225,25 +245,41 @@ class DAOConflictChecker(mobase.IPluginTool):
             tree.addTopLevelItem(parent)
         tree.expandAll()
         self._organizer.onNextRefresh(self._fill_conflict_tree, False)
-    
-    def _scan_override_dir(self) -> dict[str, list[str]]:
-        """Scans override dir for paths by filename"""
+
+    _ignore_dirs = ("characters", "docs", "logs", "settings")
+
+    _ignore_files = ("manifest.xml")
+
+    def _scan_conflict_dir(self) -> dict[str, list[str]]:
+        """Scans conflict dir for paths by filename"""
         organizer = self._organizer
         vfs_tree = organizer.virtualFileTree()
-        ovrd_path = "packages/core/override"
-        ovrd_tree = vfs_tree.find(ovrd_path, mobase.IFileTree.FileTypes.DIRECTORY)
-        if not isinstance(ovrd_tree, mobase.IFileTree):
+        isRoot = False
+        conflict_path = f"{self._get_conflict_root()}"
+        if conflict_path in ("", "."):
+            isRoot = True
+            conflict_tree = vfs_tree
+            conflict_path = ""
+        else:
+            conflict_tree = vfs_tree.find(conflict_path, mobase.IFileTree.FileTypes.DIRECTORY)
+            conflict_path = f"{conflict_path}/"
+        if not isinstance(conflict_tree, mobase.IFileTree):
             return {}
         file_dict: dict[str, list[str]] = {}
-        for entry in DAOUtils.walk_tree(ovrd_tree):
+        for entry in DAOUtils.walk_tree(conflict_tree):
             if entry.isDir():
                 continue
-            rel_path = entry.pathFrom(ovrd_tree, '/').casefold()
+            base = entry.path().split('\\')[0]
+            if isRoot and base.casefold() in self._ignore_dirs:
+                continue
+            rel_path = entry.pathFrom(conflict_tree, '/').casefold()
             name = entry.name().casefold()
+            if name in self._ignore_files:
+                continue
             if not name.endswith(".erf"):
                 file_dict.setdefault(name, []).append(rel_path)
                 continue
-            file_path = self._organizer.resolvePath(f"{ovrd_path}/{rel_path}")
+            file_path = self._organizer.resolvePath(f"{conflict_path}{rel_path}")
             erf_list = DAOUtils.get_erf_paths(name, file_path)
             for name in erf_list:
                 path = f"{rel_path } -> {name.casefold()}"
@@ -258,7 +294,8 @@ class DAOConflictChecker(mobase.IPluginTool):
         collapse_action = QAction("Collapse All")
         refresh_action = QAction("Refresh")
         paths_action = QAction("Toggle Full Paths")
-        menu.addActions([copy_action, expand_action, collapse_action, refresh_action, paths_action])
+        ovrd_action = QAction("Toggle Override Only")
+        menu.addActions([copy_action, expand_action, collapse_action, refresh_action, paths_action, ovrd_action])
         action = menu.exec(self._tree.mapToGlobal(point))
         if action == copy_action:
             item = self._tree.itemAt(point)
@@ -278,6 +315,9 @@ class DAOConflictChecker(mobase.IPluginTool):
         elif action == paths_action:
             full_path = self._get_setting("show_full_paths")
             self._set_setting("show_full_paths", not bool(full_path)) 
+        elif action == ovrd_action:
+            ovrd_only = self._get_setting("override_only")
+            self._set_setting("override_only", not bool(ovrd_only)) 
 
     def _set_font_size(self):
         """Set the display font size"""
