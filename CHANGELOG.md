@@ -1,4 +1,7 @@
 # Changelog
+## v0.2.8
+- Mod Name' has been added to the conflict checker display
+
 ## v0.2.7
 - Now able to detect conflicts across the entire data dir, or optionally just the override dir.
 - This will allow users to see where override files ar conflicting with files from installed dazip mod files.
