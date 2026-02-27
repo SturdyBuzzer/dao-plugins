@@ -25,7 +25,7 @@ class DAOConflictChecker(mobase.IPluginTool):
     TOOLTIP = (
         f"Detects conflicts in Dragon Age: Origins data directory.<br>"
     )
-    VERSION = "1.0.0"
+    VERSION = "1.0.1"
     SUPPORTURL = "https://www.nexusmods.com/dragonage/mods/6725"
 
     ##################################
@@ -246,7 +246,7 @@ class DAOConflictChecker(mobase.IPluginTool):
         tree.expandAll()
         self._organizer.onNextRefresh(self._fill_conflict_tree, False)
 
-    _ignore_dirs = ("characters", "docs", "logs", "settings")
+    _ignore_dirs = ("characters", "bin_ship", "docs", "logs", "settings")
 
     _ignore_files = ("manifest.xml")
 
