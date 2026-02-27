@@ -1,4 +1,7 @@
 # Changelog
+## v0.2.81
+- Hotfix - correct the priority ranking of conflicting files
+
 ## v0.2.8
 - Mod Name' has been added to the conflict checker display
 

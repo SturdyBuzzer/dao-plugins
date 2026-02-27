@@ -219,6 +219,7 @@ class DAOConflictChecker(mobase.IPluginTool):
         tree = self._tree
         tree.clear()
         show_full_paths = self._get_setting("show_full_paths")
+        ovrd_only = bool(self._get_setting("override_only"))
         conflict_dict = self._scan_conflict_dir()
         conflict_root = f"{self._get_conflict_root()}"
         mods_path = self._organizer.modsPath()
@@ -231,7 +232,7 @@ class DAOConflictChecker(mobase.IPluginTool):
             parent = QTreeWidgetItem([header])
             parent.setFirstColumnSpanned(True)
             
-            paths.sort(key=DAOUtils.natural_sort_key)
+            paths.sort(key=lambda path: (not (ovrd_only and "/" in path or "\\" in path), DAOUtils.natural_sort_key(path)))
             for i, path in enumerate(paths):
                 symbol = "+" if i == len(paths) - 1 else "-"
                 if path.find(".erf") < 0:
