@@ -19,10 +19,11 @@ class DAOInstall:
             'bioware' : [], 'contents' : [], 'dazip' : [],
             'docs' : [], 'mo2flatten' : [], 'override' : [],
             }              
-        for entry in DAOUtils.walk_tree(filetree):
+        for entry in DAOUtils.walk_tree_dao(filetree):
             path = entry.pathFrom(filetree, '/')
             lower_path = path.casefold()
             if entry.isDir():
+                DAOUtils.log_message(f"Path: {lower_path}")
                 if lower_path == "mo2unpack/bioware":
                     path = "mo2unpack"
                     key = 'bioware'

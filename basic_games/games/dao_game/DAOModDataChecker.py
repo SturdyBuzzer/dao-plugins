@@ -47,7 +47,7 @@ class DAOModDataChecker(mobase.ModDataChecker):
     @staticmethod
     def is_data_fixable(filetree: mobase.IFileTree) -> bool:
         """Check if mod data filetree needs fixing."""
-        for entry in DAOUtils.walk_tree(filetree): 
+        for entry in DAOUtils.walk_tree_dao(filetree): 
             if entry.isDir():
                 continue
             name = entry.name().casefold()
@@ -83,7 +83,7 @@ class DAOModDataChecker(mobase.ModDataChecker):
             "Dragon Age Origins Support Plugin",
             "flatten_override",
         )
-        for entry in DAOUtils.walk_tree(filetree):
+        for entry in DAOUtils.walk_tree_dao(filetree):
             if entry.isDir():
                 continue
             name = entry.name()

@@ -39,7 +39,7 @@ class DAOUtils:
     def search_filetree(filetree: mobase.IFileTree, filename: str) -> list[str]:
         """Returns path of any files matching the filename."""
         result: list[str] = []
-        for entry in DAOUtils.walk_tree(filetree):
+        for entry in DAOUtils.walk_tree_dao(filetree):
             if not entry.isFile():
                 continue
             if entry.name().casefold() != filename.casefold():
@@ -58,16 +58,20 @@ class DAOUtils:
         if parent is not None:
             DAOUtils.trim_branch(parent)
 
-    @staticmethod 
-    def walk_tree(filetree: mobase.IFileTree) -> Iterable[mobase.FileTreeEntry]:
-        """Walk the IFileTree recursively (depth-first)."""
-        stack: list[mobase.IFileTree] = [filetree]
-        while stack:
-            current = stack.pop()
-            for entry in current:
-                if entry.isDir() and isinstance(entry, mobase.IFileTree):
-                    stack.append(entry)
-                yield entry 
+    @staticmethod
+    def walk_tree_dao(filetree: mobase.IFileTree) -> Iterable[mobase.FileTreeEntry]:
+        """Walk IFileTree in DAO-like order"""
+        entries = list(filetree)
+        entries.sort(
+            key=lambda e: DAOUtils.natural_sort_key(e.name().casefold())
+        )
+        # Loose files first
+        for entry in entries:
+            yield entry
+        # Then recurse into dirs
+        for entry in entries:
+            if entry.isDir() and isinstance(entry, mobase.IFileTree):
+                yield from DAOUtils.walk_tree_dao(entry)
 
     ###############
     ## OS Utils ##
@@ -228,13 +232,19 @@ class DAOUtils:
                 return False
         return DAOUtils.remove_dir(src_dir)
     
-    @staticmethod    
+    @staticmethod
     def natural_sort_key(s: str):
-        """key to help sort strings like Windows file explorer""" 
-        return [
-            int(text) if text.isdigit() else text.casefold()
-            for text in re.split(r'(\d+)', s)
-        ]
+        """Windows-like natural sort key."""
+        out: list[tuple[int, str|int]] = []
+        split_re = re.compile(r'(\d+)')
+        for t in split_re.split(s):
+            if not t:
+                continue
+            if t.isdigit():
+                out.append((0, int(t)))
+            else:
+                out.append((1, t.casefold()))
+        return out   
     
     @staticmethod 
     def os_path(*parts: str) -> str:
@@ -459,9 +469,10 @@ class DAOUtils:
                     name = DAOUtils.decode_bytes(entry_data[0:64], "utf-16le")
                     if not name:
                         continue
-                    file_list.append(name)
+                    file_list.append(name.casefold())
         except Exception as e:
             DAOUtils.log_message(f"Failed to read ERF file {file_path}: {e}")
+        file_list.sort(key=DAOUtils.natural_sort_key)
         return file_list 
     
     @staticmethod

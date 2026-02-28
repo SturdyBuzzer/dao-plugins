@@ -4,7 +4,7 @@ from PyQt6.QtCore import QCoreApplication, QPoint, Qt
 from PyQt6.QtGui import QAction, QColor, QIcon
 from PyQt6.QtWidgets import( 
     QApplication, QDialog, QDialogButtonBox, 
-    QHBoxLayout, QLabel, QLineEdit, QMenu,
+    QHBoxLayout, QLineEdit, QMenu,
     QScrollArea, QSizePolicy, QTreeWidget,
     QTreeWidgetItem, QVBoxLayout, QWidget,
 )
@@ -26,7 +26,7 @@ class DAOConflictChecker(mobase.IPluginTool):
     TOOLTIP = (
         f"Detects conflicts in Dragon Age: Origins data directory.<br>"
     )
-    VERSION = "1.0.3"
+    VERSION = "1.0.4"
     SUPPORTURL = "https://www.nexusmods.com/dragonage/mods/6725"
 
     ##################################
@@ -190,14 +190,16 @@ class DAOConflictChecker(mobase.IPluginTool):
         # Filter UI
         filter_row = QHBoxLayout()
 
-        filter_row.addWidget(QLabel("Filter:"))
+        filter_row.setAlignment(Qt.AlignmentFlag.AlignLeft)
 
         self._filter_file = QLineEdit()
+        self._filter_file.setMaximumWidth(240)
         self._filter_file.setPlaceholderText("File Name contains…")
         self._filter_file.textChanged.connect(self._apply_filters)
         filter_row.addWidget(self._filter_file)
 
         self._filter_mod = QLineEdit()
+        self._filter_mod.setMaximumWidth(240)
         self._filter_mod.setPlaceholderText("Mod Name contains…")
         self._filter_mod.textChanged.connect(self._apply_filters)
         filter_row.addWidget(self._filter_mod)
@@ -221,7 +223,7 @@ class DAOConflictChecker(mobase.IPluginTool):
     
         header = tree.header()
         if header is not None:
-            header.setMinimumSectionSize(180)
+            header.setMinimumSectionSize(240)
             for index in (0, 1, 2):
                 header.setSectionResizeMode(index, header.ResizeMode.Interactive)
                 
@@ -261,7 +263,6 @@ class DAOConflictChecker(mobase.IPluginTool):
         tree = self._tree
         tree.clear()
         show_full_paths = self._get_setting("show_full_paths")
-        ovrd_only = bool(self._get_setting("override_only"))
         conflict_dict = self._scan_conflict_dir()
         conflict_root = f"{self._get_conflict_root()}"
         if conflict_root not in ("", "."):
@@ -272,12 +273,7 @@ class DAOConflictChecker(mobase.IPluginTool):
             header = f"{file} - x{len(paths)}"
             parent = QTreeWidgetItem([header])
             parent.setFirstColumnSpanned(True)
-            
-            paths.sort(key=lambda p: (
-                not (ovrd_only and ("/" in p or "\\" in p)),
-                DAOUtils.natural_sort_key(p),
-                ))
-            
+                        
             for i, path in enumerate(paths):
                 symbol = "+" if i == len(paths) - 1 else "-"
                 if path.find(".erf") < 0:
@@ -319,7 +315,7 @@ class DAOConflictChecker(mobase.IPluginTool):
         if not isinstance(conflict_tree, mobase.IFileTree):
             return {}
         file_dict: dict[str, list[str]] = {}
-        for entry in DAOUtils.walk_tree(conflict_tree):
+        for entry in DAOUtils.walk_tree_dao(conflict_tree):
             if entry.isDir():
                 continue
             base = entry.path().split('\\')[0]
@@ -338,7 +334,7 @@ class DAOConflictChecker(mobase.IPluginTool):
                 continue
             erf_list = DAOUtils.get_erf_paths(name, full_path)
             for name in erf_list:
-                path = f"{rel_path } -> {name.casefold()}"
+                path = f"{rel_path } -> {name}"
                 file_dict.setdefault(name, []).append(path)
         return dict(sorted(file_dict.items()))
     

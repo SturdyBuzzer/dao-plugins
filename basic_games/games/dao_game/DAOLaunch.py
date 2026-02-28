@@ -193,7 +193,7 @@ class DAOLaunch:
         dir_tree = vfs_tree.find(dir_name, mobase.IFileTree.FileTypes.DIRECTORY)
         if not isinstance(dir_tree, mobase.IFileTree):
             return True
-        for entry in DAOUtils.walk_tree(dir_tree):
+        for entry in DAOUtils.walk_tree_dao(dir_tree):
             if entry.isDir():
                 continue
             file_path = entry.pathFrom(vfs_tree)
@@ -316,7 +316,7 @@ class DAOLaunch:
 
         # Append new chargen files found in overrides
         visited: set[str] = set()
-        for entry in DAOUtils.walk_tree(ovrd_tree):
+        for entry in DAOUtils.walk_tree_dao(ovrd_tree):
             if entry.isDir():
                 continue
             name = entry.name().casefold()
