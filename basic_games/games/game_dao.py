@@ -17,7 +17,7 @@ class DAOriginsGame(BasicGame):
 
     Name = "Dragon Age Origins Support Plugin"
     Author = "SturdyBuzzer"
-    Version = "2.5"
+    Version = "2.9"
 
     GameName = "Dragon Age: Origins"
     GameShortName = "dragonage"
@@ -123,6 +123,11 @@ class DAOriginsGame(BasicGame):
             f"<br><br>This improves MO2s conflict detection for override files."
             f"<br><br>(Must re-install mod to reverse this.)<br><br>"
         ),
+        "duplicate_warning" : (
+            f"Used when flatten_override mode is active."
+            f"<br><br>Detects duplicate files found in the mods override dir during install."
+            f"<br><br>Displays a message box warning."
+        ),
         "deploy_bin_ship" : (
             f"Deploys all files in mod folder bin_ship to game root bin_ship at game launch."
             f"<br><br>Restores game root to previous state when game stops."
@@ -154,6 +159,11 @@ class DAOriginsGame(BasicGame):
                 self._setting_descriptions["flatten_override"],
                 True,
             ),
+            mobase.PluginSetting(
+                "duplicate_warning",
+                self._setting_descriptions["duplicate_warning"],
+                True,
+            ),            
             mobase.PluginSetting(
                 "deploy_bin_ship",
                 self._setting_descriptions["deploy_bin_ship"],

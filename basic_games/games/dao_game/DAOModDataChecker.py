@@ -28,7 +28,10 @@ class DAOModDataChecker(mobase.ModDataChecker):
     def fix(self, filetree: mobase.IFileTree) -> mobase.IFileTree:
         fix_queue = DAOModDataChecker.queue_fixes(filetree)
         if fix_queue.__len__():
-            return DAOModDataChecker.execute_fixes(filetree, fix_queue)
+            filetree = DAOModDataChecker.execute_fixes(filetree, fix_queue)
+        duplicate_warning = DAOModDataChecker.get_setting("duplicate_warning")
+        if duplicate_warning:
+            DAOModDataChecker.check_duplicates(filetree, True)
         return filetree 
        
     _dir_list = (
@@ -43,10 +46,19 @@ class DAOModDataChecker(mobase.ModDataChecker):
     _bin_extensions = {"asi", "conf", "dll", "exe", "ini"}
 
     _docs_extensions = {"jpg", "pdf", "png", "txt"}
-    
+
+    @staticmethod
+    def get_setting(key: str) -> mobase.MoVariant:
+        name = DAOModDataChecker._organizer.managedGame().name()
+        return DAOModDataChecker._organizer.pluginSetting(name, key)
+        
     @staticmethod
     def is_data_fixable(filetree: mobase.IFileTree) -> bool:
         """Check if mod data filetree needs fixing."""
+        duplicate_warning = DAOModDataChecker.get_setting("duplicate_warning")
+        if duplicate_warning and not filetree.name():
+            if DAOModDataChecker.check_duplicates(filetree, False):
+                return True
         for entry in DAOUtils.walk_tree_dao(filetree): 
             if entry.isDir():
                 continue
@@ -79,10 +91,7 @@ class DAOModDataChecker(mobase.ModDataChecker):
     def queue_fixes(filetree: mobase.IFileTree) -> dict[str, mobase.FileTreeEntry]:
         """Queue filetree fixes without modifying the tree."""
         fix_queue: dict[str, mobase.FileTreeEntry] = {}
-        flatten = DAOModDataChecker._organizer.pluginSetting(
-            "Dragon Age Origins Support Plugin",
-            "flatten_override",
-        )
+        flatten = DAOModDataChecker.get_setting("flatten_override")
         for entry in DAOUtils.walk_tree_dao(filetree):
             if entry.isDir():
                 continue
@@ -123,3 +132,52 @@ class DAOModDataChecker(mobase.ModDataChecker):
             if parent is not None:
                 DAOUtils.trim_branch(parent)
         return filetree  
+    
+    @staticmethod
+    def check_duplicates(filetree: mobase.IFileTree, ovrd: bool) -> bool:
+        """Check for duplicate files in filetree"""
+        if ovrd:
+            search_tree = filetree.find("packages/core/override",mobase.FileTreeEntry.FileTypes.DIRECTORY)
+            if not isinstance(search_tree, mobase.IFileTree):
+                search_tree = filetree.find("packages/core/override_mo2flatten",mobase.FileTreeEntry.FileTypes.DIRECTORY)
+        else:
+            search_tree = filetree
+        if not isinstance(search_tree, mobase.IFileTree):
+            return False
+        seen: dict[str, str] = {}
+        duplicates: dict[str, list[str]] = {}
+        for entry in DAOUtils.walk_tree_dao(search_tree):
+            if entry.isDir():
+                continue
+            name = entry.name().casefold()
+            rel_path = entry.pathFrom(search_tree, "/").casefold()
+            if name not in seen:
+                seen[name] = rel_path
+                continue
+            if name not in duplicates:
+                duplicates[name] = [seen[name]]
+            duplicates[name].append(rel_path)
+        if duplicates:
+            if ovrd:
+                DAOUtils.log_message(f"Logging duplicate files...")
+                for name, paths in duplicates.items():
+                    msg = f"Duplicate File:\n -- {name.upper()} --\n -> {"\n -> ".join(paths)}"
+                    DAOUtils.log_message(msg)
+                DAOModDataChecker.show_duplicate_warning()
+            return True
+        return False
+
+    @staticmethod
+    def show_duplicate_warning():
+        DAOUtils.log_message("Warning: Mod override directroy contains duplicate files!")
+        DAOUtils.show_message_box(
+            header = "Warning: Duplicate files in override",
+            message = [
+                "This mod contains duplicate file entries in the override directory.<br>",
+                "There are likely options that require the users attention.<br>",
+                "Please read the mod-page description carefully!<br>",
+            ],
+            link = f"file:///{DAOModDataChecker._organizer.basePath()}/logs/mo_interface.log",
+            link_name = "-- Click here to view logs. --",
+            warning = True
+            )    
