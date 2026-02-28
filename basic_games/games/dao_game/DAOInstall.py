@@ -23,7 +23,6 @@ class DAOInstall:
             path = entry.pathFrom(filetree, '/')
             lower_path = path.casefold()
             if entry.isDir():
-                DAOUtils.log_message(f"Path: {lower_path}")
                 if lower_path == "mo2unpack/bioware":
                     path = "mo2unpack"
                     key = 'bioware'
