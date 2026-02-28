@@ -1,4 +1,10 @@
 # Changelog
+## v0.2.9
+- Improved the file sorting logic to be more in line with how DAO does it.
+- Conflict checker - can now filter columns by text
+- Conflict checker - can now ignore selected mods
+- Mod-data-checker - Now installer will warn the user if there are duplicate override files that require making choices.
+
 ## v0.2.81
 - Hotfix - correct the priority ranking of conflicting files
 
