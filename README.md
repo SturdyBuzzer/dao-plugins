@@ -30,6 +30,7 @@
 * Supports **.override** packages (the ones built from [DAO-Modmanager](https://www.nexusmods.com/dragonage/mods/277)).
 * Triggers any `OverrideConfig.xml` install scripts included with `.override` packages.
 * Auto-sorting and management for Overrides, Docs, Binaries, etc.
+* Warns of duplicates in mods override dir
 
 ### Dynamic `Addins.xml` and `Offers.xml` Generation
 
@@ -138,14 +139,17 @@
 * Option to show full or relative paths.
 * Option to show only conflicts in override directory.
 * Paths can be copied to clipboard.
+* Filterable columns
+* Can select specific mods to ignore
 * Customizable font size.
   *(Settings → Plugins → Dragon Age: Origins – Conflict Checker → `font_point_size`)*
 * Context menu options:
 
+  * Collapse All
   * Copy Path
   * Expand All
-  * Collapse All
-  * Refresh View
+  * Ignore Mod
+  * Refresh
   * Toggle Full Paths
   * Toggle Override Only
 
