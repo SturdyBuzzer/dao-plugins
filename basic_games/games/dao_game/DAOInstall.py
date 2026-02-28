@@ -19,7 +19,7 @@ class DAOInstall:
             'bioware' : [], 'contents' : [], 'dazip' : [],
             'docs' : [], 'mo2flatten' : [], 'override' : [],
             }              
-        for entry in DAOUtils.walk_tree(filetree):
+        for entry in DAOUtils.walk_tree_dao(filetree):
             path = entry.pathFrom(filetree, '/')
             lower_path = path.casefold()
             if entry.isDir():
