@@ -1,3 +1,4 @@
+import hashlib
 import mobase
 import os
 import re
@@ -117,10 +118,28 @@ class DAOUtils:
             DAOUtils.log_message(f"Failed to create symlink {link} -> {target}: {e}.")
             return False
         return True
-              
+
+    @staticmethod 
+    def create_archive(src: str, dst: str, delete: bool = True) -> bool:
+        """Create an archive from the contents of src and save it to dst. Optionally delete the original files."""
+        if not os.path.isdir(src):
+            DAOUtils.log_message(f"Source directory not found: {src}.")
+            return False
+        try:
+            with zipfile.ZipFile(dst, "w", zipfile.ZIP_DEFLATED) as zip_ref:
+                for root, _, files in os.walk(src):
+                    for file in files:
+                        file_path = os.path.join(root, file)
+                        arcname = os.path.relpath(file_path, src)
+                        zip_ref.write(file_path, arcname)
+        except Exception as e:
+            DAOUtils.log_message(f"Failed to create archive {dst} from {src}: {e}.")
+            return False
+        return DAOUtils.remove_dir(src) if delete else True
+                  
     @staticmethod 
     def extract_archive(src: str, dst: str, delete: bool = True) -> bool:
-        """Extract archive at src to dst, and remove the archive if successful."""
+        """Extract archive at src to dst. Optionally delete the original archive."""
         if not DAOUtils.make_dirs(dst):
             return False
         try:
@@ -150,8 +169,10 @@ class DAOUtils:
         return False
     
     @staticmethod 
-    def get_ext(filename:str) -> str:
-        return filename.rsplit(".", 1)[1]
+    def get_info(path: str) -> list[str]:
+        base, ext = path.rsplit(".", 1)
+        name = os.path.basename(base)
+        return [name, ext]
 
     @staticmethod
     def get_rel_path(path: str, base: str) -> str | None:
@@ -507,3 +528,19 @@ class DAOUtils:
         box.setTextInteractionFlags(Qt.TextInteractionFlag.TextBrowserInteraction)
         result = box.exec()
         return result == QMessageBox.StandardButton.Ok
+    
+    @staticmethod
+    def validate_checksum(target_path: str, checksum: str) -> bool:
+        """Uses file checksum to validate file"""
+        sha256 = hashlib.sha256()
+        try:
+            with open(target_path, "rb") as f:
+                for chunk in iter(lambda: f.read(8192), b""):
+                    sha256.update(chunk)
+            if sha256.hexdigest() != checksum:
+                DAOUtils.log_message(f"Failed to validate: {target_path}")
+                return False
+            return True
+        except Exception as e:
+            DAOUtils.log_message(f"Failed to validate: {target_path}: {e}")
+            return False

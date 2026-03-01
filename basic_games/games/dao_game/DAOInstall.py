@@ -221,6 +221,17 @@ class DAOInstall:
         if not DAOUtils.move_file_overwrite_dirs(src_path, dst_path):
             return False
         return DAOUtils.format_xml_file(dst_path)
+    
+    @staticmethod
+    def convert_to_zip(src: str) -> bool:
+        """Change file extension to .zip"""
+        ext = DAOUtils.get_info(src)[1]
+        if ext == "zip":
+            return True
+        dst = f"{src.removesuffix(f".{ext}")}.zip"
+        if DAOUtils.move_file_overwrite(f"{src}.meta", f"{dst}.meta"):
+            return DAOUtils.move_file_overwrite(src, dst)
+        return False
 
     ##################
     ## Install docs ##
@@ -364,3 +375,47 @@ class DAOInstall:
                 rel_path = os.path.relpath(root, ovrd_path)
                 return DAOUtils.os_path(ovrd_path, rel_path, file)
         return ""
+
+    ###########
+    ## FOMOD ##
+    ###########
+    
+    DAO_FOMOD_PATH = r"plugins\basic_games\games\dao_game\DAO_FOMOD"
+
+    @staticmethod
+    def check_fomod_script(path: str, name: str) -> bool:
+        """Check if a matching FOMOD script exists"""
+        script_dir = f"{DAOInstall.DAO_FOMOD_PATH}\\{name}"
+        if not os.path.exists(script_dir):
+            return True
+        checksum = DAOUtils.read_file(f"{script_dir}/checksum")
+        if not DAOUtils.validate_checksum(path, checksum):
+            return True
+        DAOUtils.log_message(f"Adding FOMOD script to: {name}")
+        if DAOInstall.repackage_with_fomod(path, script_dir):
+            DAOUtils.log_message(f"Done.")
+            return True
+        DAOUtils.log_message(f"C'est un désastre, non?")
+        return False
+
+    @staticmethod
+    def repackage_with_fomod(path: str, script_dir: str) -> bool:
+        """Repackage archive with FOMOD scripts inside"""
+        # Extract  
+        parent = os.path.dirname(path)
+        temp = DAOUtils.os_path(parent, "temp")
+        fomod = DAOUtils.os_path(temp, "fomod")
+        if not (DAOUtils.make_dirs(fomod) and DAOUtils.extract_archive(path, temp, False)):
+            DAOUtils.remove_dir(temp)
+            return False
+        # Copy FOMOD scripts
+        info = DAOUtils.os_path(script_dir, "info.xml")
+        config = DAOUtils.os_path(script_dir, "ModuleConfig.xml")
+        if not (DAOUtils.copy_file(info, fomod) and DAOUtils.copy_file(config, fomod)):
+            DAOUtils.remove_dir(temp)
+            return False        
+        # Re-zip
+        if DAOUtils.create_archive(temp, path, True):
+            return DAOInstall.convert_to_zip(path)
+        DAOUtils.remove_dir(temp)
+        return False

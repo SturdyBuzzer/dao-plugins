@@ -115,7 +115,7 @@ class DAOriginsGame(BasicGame):
     ################    
     _setting_descriptions = {
         "enable_logging" : (
-            f"Toggles message logging to console (mo_interface.log).<br><br>"
+            f"Toggles message logging to console (logs/mo_interface.log).<br><br>"
         ),
         "flatten_override" : (
             f"Removes all sub-directories from packages/core/override."
@@ -126,13 +126,13 @@ class DAOriginsGame(BasicGame):
         "duplicate_warning" : (
             f"Used when flatten_override mode is active."
             f"<br><br>Detects duplicate files found in the mods override dir during install."
-            f"<br><br>Displays a message box warning."
+            f"<br><br>Displays a message box warning.<br><br>"
         ),
         "deploy_bin_ship" : (
             f"Deploys all files in mod folder bin_ship to game root bin_ship at game launch."
             f"<br><br>Restores game root to previous state when game stops."
             f"<br><br>Allows for binaries/load libraries to be managed from MO2."
-            f"<br><br>(E.g, patched DAOrigins.exe, DXVK, DAFIX )."
+            f"<br><br>(E.g, patched DAOrigins.exe, DXVK, DAFIX ).<br><br>"
         ),
         "build_addins_offers_xml" : (
             f"Dynamically builds Addins.xml and Offers.xml files on game launch."
@@ -140,10 +140,17 @@ class DAOriginsGame(BasicGame):
             f"<br><br>Disable to manually manage Addins.xml and Offers.xml.<br><br>"
         ),
         "build_chargenmorphcfg_xml" : (
-            f"Dynamically builds Chargenmorphcfg.xml file on game launch.<br><br>"
+            f"Dynamically builds Chargenmorphcfg.xml file on game launch."
             f"<br><br>Results based on mods found in packages/core/overrides."
             f"<br><br>Disable to manually manage Chargenmorphcfg.xml.<br><br>"
         ),
+        "inject_fomod_scripts" : (
+            f"Repackages select mods with fomod install scripts on download."
+            f"<br><br>Hopefully coverage will grow over time..."
+            f"<br><br>Currently below mods are included:<br>"
+            f" - Dain's Fixes"
+            f"<br><br>"
+        ),        
     }
     
     # Add DAO plugin settings to the settings menu
@@ -157,7 +164,7 @@ class DAOriginsGame(BasicGame):
             mobase.PluginSetting(
                 "flatten_override",
                 self._setting_descriptions["flatten_override"],
-                True,
+                False,
             ),
             mobase.PluginSetting(
                 "duplicate_warning",
@@ -179,6 +186,11 @@ class DAOriginsGame(BasicGame):
                 self._setting_descriptions["build_chargenmorphcfg_xml"],
                 True,
             ),
+            mobase.PluginSetting(
+                "inject_fomod_scripts",
+                self._setting_descriptions["inject_fomod_scripts"],
+                True,
+            ),            
         ]
 
     def _get_setting(self, key: str) -> mobase.MoVariant:
@@ -275,12 +287,11 @@ class DAOriginsGame(BasicGame):
         """Event Handler for onDownloadComplete"""
         dm = self._organizer.downloadManager()
         src = dm.downloadPath(download_id)
-        ext = DAOUtils.get_ext(src)
-        if not ext.casefold() in {"dazip", "override"}:
-            return
-        dst = f"{src.removesuffix(f".{ext}")}.zip"
-        DAOUtils.move_file_overwrite(f"{src}.meta", f"{dst}.meta")
-        DAOUtils.move_file_overwrite(src, dst)
+        name, ext = DAOUtils.get_info(src)
+        if ext.casefold() in {"dazip", "override"}:
+            DAOInstall.convert_to_zip(src)
+        if self._get_setting("inject_fomod_scripts"):
+            DAOInstall.check_fomod_script(src, name)
 
     # Mod Installers:
     # Support for .dazip, 
