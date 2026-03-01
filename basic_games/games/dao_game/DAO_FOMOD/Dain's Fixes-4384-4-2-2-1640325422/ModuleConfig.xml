@@ -1,0 +1,1180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/Cutleast/FOMOD-Creation-Kit/master/res/schemas/ModConfig5.0.xsd">
+  <moduleName>Dain's Fixes</moduleName>
+  <installSteps order="Explicit">
+    <installStep name="Core Utilities (Required)">
+      <optionalFileGroups order="Explicit">
+        <group name="_Core" type="SelectAll">
+          <plugins order="Explicit">
+            <plugin name="DF Options">
+              <description>Defines the options table for configuring if certain mods are enabled or not in cases where they can't be appropriately separated.</description>
+              <files>
+                <folder source="Dain's Fixes/_Core/DF Options" destination="packages/core/override/Dain's Fixes/_Core/DF Options"/>
+              </files>
+              <typeDescriptor>
+                <type name="Required"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Event Manager">
+              <description>Repack of Anakin55's excellent mod as per his instructions. Needed for compatibility between various event overrides and other mods that do the same.</description>
+              <files>
+                <folder source="Dain's Fixes/_Core/Event Manager" destination="packages/core/override/Dain's Fixes/_Core/Event Manager"/>
+              </files>
+              <typeDescriptor>
+                <type name="Required"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Effect Manager">
+              <description>Similar to event manager, but specific to the apply and remove effect events. Required for performance and indirectly bug fixes (as the engine simply stops processing scripting if it takes too long, which can lead to things like cutscenes not triggering or equipment disappearing).</description>
+              <files>
+                <folder source="Dain's Fixes/_Core/Effect Manager" destination="packages/core/override/Dain's Fixes/_Core/Effect Manager"/>
+              </files>
+              <typeDescriptor>
+                <type name="Required"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Equip Manager">
+              <description>More of the same. Allows graceful coordination of equip events while minimising the amount of event redirection going on.</description>
+              <files>
+                <folder source="Dain's Fixes/_Core/Equip Manager" destination="packages/core/override/Dain's Fixes/_Core/Equip Manager"/>
+              </files>
+              <typeDescriptor>
+                <type name="Required"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="IOH Manager">
+              <description>Coordinates Item On Hit events while minimising event redirection.</description>
+              <files>
+                <folder source="Dain's Fixes/_Core/IOH Manager" destination="packages/core/override/Dain's Fixes/_Core/IOH Manager"/>
+              </files>
+              <typeDescriptor>
+                <type name="Required"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Uninstall Checker">
+              <description>Determines if modules have been uninstalled that require specific actions to avoid permanent game effects.</description>
+              <files>
+                <folder source="Dain's Fixes/_Core/Uninstall Checker" destination="packages/core/override/Dain's Fixes/_Core/Uninstall Checker"/>
+              </files>
+              <typeDescriptor>
+                <type name="Required"/>
+              </typeDescriptor>
+            </plugin>
+          </plugins>
+        </group>
+      </optionalFileGroups>
+    </installStep>
+    <installStep name="Bug Fixes (Recommended)">
+      <optionalFileGroups order="Explicit">
+        <group name="Bug Fixes" type="SelectAny">
+          <plugins order="Explicit">
+            <plugin name="Abilities apply impact threat">
+              <description>Spells and talents which have impact threat associated with them now apply the threat correctly.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Abilities apply impact threat" destination="packages/core/override/Dain's Fixes/Bug Fixes/Abilities apply impact threat"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Alistair restriction">
+              <description>Fixes being able to give items restricted to Alistair to other followers while in camp.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Alistair restriction" destination="packages/core/override/Dain's Fixes/Bug Fixes/Alistair restriction"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Antimagic Ward">
+              <description>Now prevents secondary effects of spells as per its description. To keep in line with other spell mechanics, this only works on hostile magic.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Antimagic Ward" destination="packages/core/override/Dain's Fixes/Bug Fixes/Antimagic Ward"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Arrow of Slaying">
+              <description>Changed level difference scaling from binary XOR to squared. Since this generally results in huge numbers against white-ranked enemies, it instead deals their current hp in damage (i.e. instant kill).</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Arrow of Slaying" destination="packages/core/override/Dain's Fixes/Bug Fixes/Arrow of Slaying"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Attack Speed mod">
+              <description>Fixed behaviour where an attack speed mod of less than -0.5 resets to normal attack speed. Most fixes change core scripts (bad for compatibility) - this caps it in character properties (.gda config file) before it reaches the engine.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Attack Speed mod" destination="packages/core/override/Dain's Fixes/Bug Fixes/Attack Speed mod"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Aura stacking">
+              <description>Fixes the benefits of auras (such as Rally or Rock Mastery) being applied twice after transitioning areas.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Aura stacking" destination="packages/core/override/Dain's Fixes/Bug Fixes/Aura stacking"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Bad monster animations">
+              <description>Fixes Greater Shades and Shriek Alphas being unable to cast Misdirection Hex and Mark of Death respectively due to lacking the appropriate animation. Also prevents a certain lategame boss from attempting to cast Misdirection Hex while in revenant form.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Bad monster animations" destination="packages/core/override/Dain's Fixes/Bug Fixes/Bad monster animations"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Beyond the Veil">
+              <description>Now provides +20% movement speed as per description.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Beyond the Veil" destination="packages/core/override/Dain's Fixes/Bug Fixes/Beyond the Veil"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Chain Lighting">
+              <description>Now benefits from spellpower, using the same scaling as other spells (i.e. 100 spellpower doubles damage). It also no longer bounces to the propagating target, can also continue to propagate if the bolt kills the target, and centres its AoE on the correct target when selecting enemies to bounce to.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Chain Lighting" destination="packages/core/override/Dain's Fixes/Bug Fixes/Chain Lighting"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Chevalier Set Bonus">
+              <description>Set bonus now gives +3 Willpower rather than -3.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Chevalier Set Bonus" destination="packages/core/override/Dain's Fixes/Bug Fixes/Chevalier Set Bonus"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Combat Magic tooltip">
+              <description>Upkeep now shows in the tooltip.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Combat Magic tooltip" destination="packages/core/override/Dain's Fixes/Bug Fixes/Combat Magic tooltip"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Condition groups">
+              <description>Fixes the ability to use multiple mutually-exclusive modals (e.g. Shale's modes, bard songs or mage weapon enchantments) if queued up.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Condition groups" destination="packages/core/override/Dain's Fixes/Bug Fixes/Condition groups"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Conditional modals">
+              <description>Fixes modals sometimes not being turned off when they should on equipment change, and turning off when replacing a weapon with an equally valid one.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Conditional modals" destination="packages/core/override/Dain's Fixes/Bug Fixes/Conditional modals"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Cone of Cold">
+              <description>Now must pass a physical resistance check in order to freeze a target.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Cone of Cold" destination="packages/core/override/Dain's Fixes/Bug Fixes/Cone of Cold"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Crow Poison">
+              <description>Crow Poison and the concentrated variant now correctly have a chance to stun the target with each hit.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Crow Poison" destination="packages/core/override/Dain's Fixes/Bug Fixes/Crow Poison"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Crushing Prison targeting friendlies">
+              <description>Allows targeting on all targets. If targeted on a friendly unit that is not affected by forcefield, nothing will happen (no animation, mana won't be deducted, no cooldown).</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Crushing Prison targeting friendlies" destination="packages/core/override/Dain's Fixes/Bug Fixes/Crushing Prison targeting friendlies"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Curse of Mortality">
+              <description>Now prevents combat health regeneration.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Curse of Mortality" destination="packages/core/override/Dain's Fixes/Bug Fixes/Curse of Mortality"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="DLC heartbeat">
+              <description>Fixes the PC not having the periodic heartbeat event in Golems of Amgarrak and Witch Hunt. This means that the PC can't detect traps, stamina/mana regen doesn't update, and a number of my fixes that rely on the event won't work.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/DLC heartbeat" destination="packages/core/override/Dain's Fixes/Bug Fixes/DLC heartbeat"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="DOT duration">
+              <description>Fixes DOTs sometimes applying one too many or one too few ticks.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/DOT duration" destination="packages/core/override/Dain's Fixes/Bug Fixes/DOT duration"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="DOT stacking">
+              <description>Fixes multiple DOT heartbeats being active when refreshing DOT effects. For instance the Corrupted Spider Queen's infamous poison spit damage, or casting Walking Bomb then Virulent Walking Bomb at a target resulting in a double potency VWB.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/DOT stacking" destination="packages/core/override/Dain's Fixes/Bug Fixes/DOT stacking"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Damage Ward resets threat">
+              <description>Removes all incoming threat when damage ward effect is applied (source of damage immunity for Forcefield and Strength of Stone). Game engine instead resets outgoing threat.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Damage Ward resets threat" destination="packages/core/override/Dain's Fixes/Bug Fixes/Damage Ward resets threat"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Dispel and Chromatic Coatings">
+              <description>Fixes Dispel Coating doing nothing and Chromatic Coating applying the dispel effect instead of elemental damage.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Dispel and Chromatic Coatings" destination="packages/core/override/Dain's Fixes/Bug Fixes/Dispel and Chromatic Coatings"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Dual Striking">
+              <description>Fixed one of the three animations failing to apply the attack impact event and so always whiffing.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Dual Striking" destination="packages/core/override/Dain's Fixes/Bug Fixes/Dual Striking"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Dual Weapon Expert">
+              <description>No longer triggers on self damage, may trigger if the target already has other DoTs applied, and you must hit an enemy with an autoattack or talent that requires dual wielding or wielding melee weapons to trigger the bleed. Also corrected the damage to its intended value ([level+7] damage over [level/5 + 2] seconds, minimum 5 s).</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Dual Weapon Expert" destination="packages/core/override/Dain's Fixes/Bug Fixes/Dual Weapon Expert"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Dual Weapon Sweep">
+              <description>Sweep occasionally misses if the target is directly in front of the caster. Fixed this.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Dual Weapon Sweep" destination="packages/core/override/Dain's Fixes/Bug Fixes/Dual Weapon Sweep"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Earthen Grasp rank adjustment">
+              <description>Fixes Earthen Grasp applying the full duration to targets of all ranks, rather than yellow and orange enemies shortening the duration.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Earthen Grasp rank adjustment" destination="packages/core/override/Dain's Fixes/Bug Fixes/Earthen Grasp rank adjustment"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Fang">
+              <description>Changed stats to that of the console version.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Fang" destination="packages/core/override/Dain's Fixes/Bug Fixes/Fang"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Find Vitals">
+              <description>Now applies intended benefits of +10% crit chance and +20% crit damage rather than +5% spirit damage.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Find Vitals" destination="packages/core/override/Dain's Fixes/Bug Fixes/Find Vitals"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Fire and ice cancel out">
+              <description>Fire DOTs now remove the paralyze effect of cold spells in addition to petrify and DOTs, and added Blizzard and Hand of Winter to the list of spells it removes. Cold DOTs (effectively only Blizzard) still remove all fire DOTs as per vanilla behaviour.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Fire and ice cancel out" destination="packages/core/override/Dain's Fixes/Bug Fixes/Fire and ice cancel out"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Follower specialisation points">
+              <description>Fixes followers not gaining a specialisation point at level 7 if their AI package doesn't have a specialisation. Basically a fix for Sten thoug h some others also benefit like party members in Golems of Amgarrak.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Follower specialisation points" destination="packages/core/override/Dain's Fixes/Bug Fixes/Follower specialisation points"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Friendly abilities drop stealth">
+              <description>Characters are no longer dropped out of stealth when receiving friendly effects.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Friendly abilities drop stealth" destination="packages/core/override/Dain's Fixes/Bug Fixes/Friendly abilities drop stealth"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Frightening Appearance buffs Threaten">
+              <description>The Frightening Appearance talent now passively buffs Threaten, causing it to draw triple threat rather than double.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Frightening Appearance buffs Threaten" destination="packages/core/override/Dain's Fixes/Bug Fixes/Frightening Appearance buffs Threaten"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Generates Cleansing Aura">
+              <description>Implements effect. Aura is identical to Cleansing Aura but does not drain the wielder's mana/stamina.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Generates Cleansing Aura" destination="packages/core/override/Dain's Fixes/Bug Fixes/Generates Cleansing Aura"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Heroic Attributes">
+              <description>Fixes characters' hit rates erroneously showing 100% towards the end of the game, friendly fire counting towards total party damage, and total damage capping out at 999999 which can be reached in DLCs. These won't work retroactively however.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Heroic Attributes" destination="packages/core/override/Dain's Fixes/Bug Fixes/Heroic Attributes"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Increases Hostility and Intimidation">
+              <description>Implemented this item effect in line with source comments. Now increases threat by 5 per attack (like Increases Hostility) and adds an effective 10 strength when evaluating an Intimidate roll.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Increases Hostility and Intimidation" destination="packages/core/override/Dain's Fixes/Bug Fixes/Increases Hostility and Intimidation"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Increases Monetary Gain">
+              <description>Implemented this item effect in line with source comments and codex rewards. Gold from killing enemies is increased by 5% per such item held by the killer. Fully stacks with codex xp increase.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Increases Monetary Gain" destination="packages/core/override/Dain's Fixes/Bug Fixes/Increases Monetary Gain"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Item sets on party change">
+              <description>Applies item set bonuses to characters when they are swapped into the party. Compatible with No Helmet Hack.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Item sets on party change" destination="packages/core/override/Dain's Fixes/Bug Fixes/Item sets on party change"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Lacerate">
+              <description>Currently does absolutely nothing (the game checks if the character has a modal active, not a passive ability). Fixed it to apply the intended DoT.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Lacerate" destination="packages/core/override/Dain's Fixes/Bug Fixes/Lacerate"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Legion of the Dead heraldry">
+              <description>Adds +3 all stats rather than +20.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Legion of the Dead heraldry" destination="packages/core/override/Dain's Fixes/Bug Fixes/Legion of the Dead heraldry"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Life Drain">
+              <description>Applied heal is now dependent on the damage the target takes: affected by target resistance and damage scale, caster spirit damage amplification and forcefield. Blood Sacrifice is likewise affected by forcefield and damage scale, and fixed the caster health cap not taking into account the 2x heal multiplier.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Life Drain" destination="packages/core/override/Dain's Fixes/Bug Fixes/Life Drain"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Mage Chest Key">
+              <description>Opening the chest at ostagar no longer removes the key from your inventory. This allows you to complete the lonely deserter, and still open the chest in Return to Ostagar.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Mage Chest Key" destination="packages/core/override/Dain's Fixes/Bug Fixes/Mage Chest Key"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Magebane and Soldiersbane drain">
+              <description>Fixed Magebane and Soldiersbane to drain mana/stamina rather than increase it.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Magebane and Soldiersbane drain" destination="packages/core/override/Dain's Fixes/Bug Fixes/Magebane and Soldiersbane drain"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Mana Cleanse">
+              <description>Fixed Mana Cleanse to reduce target mana rather than increase it.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Mana Cleanse" destination="packages/core/override/Dain's Fixes/Bug Fixes/Mana Cleanse"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Mighty Blow slows">
+              <description>Now applies a 50% slow for 5 seconds, as per description.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Mighty Blow slows" destination="packages/core/override/Dain's Fixes/Bug Fixes/Mighty Blow slows"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Monster abilities">
+              <description>Fixes a slew of monster abilities that don't work quite right: - Abomination's triple strike now debuffs the target instead of buffing it, for the Desire and Sloth variants. - Arcane Horror now has cooldown applied correctly to Swarm and Restore Undead abilities - Broodmother charge now always deals damage and knocks down the target if the physical resistance check is failed. In vanilla these effects are applied if and only if the resistance check succeeds. - Canine howl now applies defense penalty correctly, and boss version applies knockdown in the correct direction. - Desire Demon's Cursed Dance correctly puts males to sleep and curse of mortality effect now prevents health regen. Additionally, mental resistance check is now against demon's spellpower rather than strength. - Desire Demon's Scream now checks resistance against spellpower rather than strength. - Ogre Stomp now calculates damage and checks resistance against each target, rather than itself. - Stalker scare icon now shows up as debuff rather than buff.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Monster abilities" destination="packages/core/override/Dain's Fixes/Bug Fixes/Monster abilities"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Morale">
+              <description>Implements the High Morale and Low Morale item properties. Grants the respective high morale and low morale traits, which give +2 armor, +5 defense and +3 strength, and -2 armor, -5 defense and -2 damage respectively.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Morale" destination="packages/core/override/Dain's Fixes/Bug Fixes/Morale"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Oghren Dwarven Resistance">
+              <description>Gives Oghren the Dwarven Resistance ability.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Oghren Dwarven Resistance" destination="packages/core/override/Dain's Fixes/Bug Fixes/Oghren Dwarven Resistance"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Overpower">
+              <description>Fixes Shield Mastery minimising weapon damage rolls on Overpower rather than maximising them.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Overpower" destination="packages/core/override/Dain's Fixes/Bug Fixes/Overpower"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="PC crit chance">
+              <description>Fixes the player character lacking a base 3% chance to crit.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/PC crit chance" destination="packages/core/override/Dain's Fixes/Bug Fixes/PC crit chance"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Paralysis Explosion">
+              <description>Fixes Paralysis Explosion not checking for spell resistance when Glyph of Paralysis is used last.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Paralysis Explosion" destination="packages/core/override/Dain's Fixes/Bug Fixes/Paralysis Explosion"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Plus Heal">
+              <description>Fixes the +% heal item property having no effect.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Plus Heal" destination="packages/core/override/Dain's Fixes/Bug Fixes/Plus Heal"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Poison stacking">
+              <description>Applying a poison or coating will remove any existing poisons or coatings first.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Poison stacking" destination="packages/core/override/Dain's Fixes/Bug Fixes/Poison stacking"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Power of Blood">
+              <description>Changed the descriptions of Blood Thirst and Tainted Blade to reflect them being sustained rather than active abilities, Dark Passage to reflect it being passive, and added cooldowns to Dark Sustenance, Bloody Grasp and Blood Fury. Also fixes Bloody Grasp causing its icon to linger in the caster's status bar.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Power of Blood" destination="packages/core/override/Dain's Fixes/Bug Fixes/Power of Blood"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Ranged aim speed">
+              <description>Fixes Haste and Swift Salve reducing aim speed instead of increasing it.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Ranged aim speed" destination="packages/core/override/Dain's Fixes/Bug Fixes/Ranged aim speed"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Reaper's Cudgel">
+              <description>Changed the rewards in Origins and Awakening to use the same model as in Golems, fixed the issue where no rune slots are present, and reduced its absurd value to (presumably) what was intended.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Reaper's Cudgel" destination="packages/core/override/Dain's Fixes/Bug Fixes/Reaper's Cudgel"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Reduces Hostility">
+              <description>Implemented effect. Reduces character's threat to each enemy in combat by an additional 0.5*&lt;item power&gt; per second. Also fixes Shale's Rock Mastery modal, which will decrease threat at 4 points/second.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Reduces Hostility" destination="packages/core/override/Dain's Fixes/Bug Fixes/Reduces Hostility"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Repeater Gloves">
+              <description>Reduces rapid aim property from -3.0 seconds aim time to -0.3 seconds.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Repeater Gloves" destination="packages/core/override/Dain's Fixes/Bug Fixes/Repeater Gloves"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Rock Barrage">
+              <description>Fixes Shale's Rock Barrage having no effect.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Rock Barrage" destination="packages/core/override/Dain's Fixes/Bug Fixes/Rock Barrage"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Rune slots">
+              <description>Fixes all items which lack rune slots but should have them, e.g. Crow Dagger.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Rune slots" destination="packages/core/override/Dain's Fixes/Bug Fixes/Rune slots"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Rune stacking">
+              <description>Fixes elemental runes double counting when equipped in a weapon with the same element.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Rune stacking" destination="packages/core/override/Dain's Fixes/Bug Fixes/Rune stacking"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Scattershot">
+              <description>Can now propagate if it kills the primary target on impact.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Scattershot" destination="packages/core/override/Dain's Fixes/Bug Fixes/Scattershot"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Shale Immunities">
+              <description>Gives Shale the various golem immunities (which are many, but the only ones likely to be used against the party are Stun and Daze). It's present in game but given to Shale's model reference before she was moved from the base game to DLC.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Shale Immunities" destination="packages/core/override/Dain's Fixes/Bug Fixes/Shale Immunities"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Shale Quake">
+              <description>Now knocks targets back as per description.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Shale Quake" destination="packages/core/override/Dain's Fixes/Bug Fixes/Shale Quake"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Shattering Blows">
+              <description>Corrects appearance flags so that this will now apply. Additionally adds appearance flags to revenants and the Varterral.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Shattering Blows" destination="packages/core/override/Dain's Fixes/Bug Fixes/Shattering Blows"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Shield Wall damage">
+              <description>Shield Wall now reduces damage dealt by 20% as per description.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Shield Wall damage" destination="packages/core/override/Dain's Fixes/Bug Fixes/Shield Wall damage"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Slow Rune duration">
+              <description>Now scales with item power. Changed slow duration to (3 + power) seconds in line with other effects. Chance to proc remains at 10% (twice as likely as paralyse).</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Slow Rune duration" destination="packages/core/override/Dain's Fixes/Bug Fixes/Slow Rune duration"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Spirit death">
+              <description>Spirits now properly deactivate abilities on death (no more permanently lingering aura of pain/captivating song), grant xp, and refill stamina if killed by a warrior with deathblows.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Spirit death" destination="packages/core/override/Dain's Fixes/Bug Fixes/Spirit death"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Suppressing Fire">
+              <description>Now only triggers on ranged attacks or talents, rather than any form of damage. E.g. tainted blade won't trigger it on yourself, and throwing an acid flask won't trigger it on enemies.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Suppressing Fire" destination="packages/core/override/Dain's Fixes/Bug Fixes/Suppressing Fire"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Sweeping Strike">
+              <description>Can now choose where to aim cone when already targeting an enemy.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Sweeping Strike" destination="packages/core/override/Dain's Fixes/Bug Fixes/Sweeping Strike"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Telekinetic dual wield">
+              <description>Fixes telekinetic weapons applying double the armour penetration bonus when dual wielding.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Telekinetic dual wield" destination="packages/core/override/Dain's Fixes/Bug Fixes/Telekinetic dual wield"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Twin Strikes">
+              <description>Now applies the first hit from main hand and second hit from off hand, rather than both from main.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Twin Strikes" destination="packages/core/override/Dain's Fixes/Bug Fixes/Twin Strikes"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Vessel of the Spirit">
+              <description>Wynne must now have Aneirin's Token equipped to gain the bonus effects, rather than in inventory. Aditionally shows deactivation penalties as debuffs rather than buffs, and the tooltip no longer includes a level requirement.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Vessel of the Spirit" destination="packages/core/override/Dain's Fixes/Bug Fixes/Vessel of the Spirit"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Weak Points">
+              <description>Implements the on-hit effect so that this actually does something. Adds +25% damage scale over 9 seconds. Probably overpowered, but so is everything else in Awakening, and it's following as close as possible to the partial implementation.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Weak Points" destination="packages/core/override/Dain's Fixes/Bug Fixes/Weak Points"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Weakens Nearby Darkspawn">
+              <description>Implemented effect. Creates a 5 metre radius aura that applies the effects of the Aura of Weakness spell (-10 attack and defence, physical resistance check for 30% slow) to any darkspawn entering it.</description>
+              <files>
+                <folder source="Dain's Fixes/Bug Fixes/Weakens Nearby Darkspawn" destination="packages/core/override/Dain's Fixes/Bug Fixes/Weakens Nearby Darkspawn"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+          </plugins>
+        </group>
+      </optionalFileGroups>
+    </installStep>
+    <installStep name="Balance/Mechanics Tweaks (Optional)">
+      <optionalFileGroups order="Explicit">
+        <group name="Tweaks" type="SelectAny">
+          <plugins order="Explicit">
+            <plugin name="Alistair's Oath">
+              <description>If all wardens get an amulet made from their joining blood, how come Alistair doesn't have one? Now he does.</description>
+              <files>
+                <folder source="Dain's Fixes/Tweaks/Alistair's Oath" destination="packages/core/override/Dain's Fixes/Tweaks/Alistair's Oath"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Attack resolution">
+              <description>This is 5 mods in one, which are unfortunately inextricably linked. You can enable/disable each by editing the dfopts_attackres.gda file with GDApp. - Normalises the behaviour between auto-crit (autocrit effect e.g. pinpoint strike, death hex and attacking from stealth) and never-crit (dual strike, rapid shot), with each such effect canceling an opposing one out. Vanilla behaviour with both causes non-crit rolls to convert to crits and crit rolls to convert to hits, incentivising a low crit chance. - Allows backstabs to land when under the effects of Misdirection Hex, if the attack threatens a critical. - Implements the Messy Kills item property, doubling the chance of a deathblow. - Calculates attack timing with Dual Striking as the average of both weapons, rather than the main hand only. - Removes the evasion dodge animation that interrupts the rogue. The various talent changes are all compiled with this tweak and will respect the options gda file, defaulting to vanilla behaviour if this tweak isn't included.</description>
+              <files>
+                <folder source="Dain's Fixes/Tweaks/Attack resolution" destination="packages/core/override/Dain's Fixes/Tweaks/Attack resolution"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Awakening Metal Scaling">
+              <description>Armour made from white steel and volcanic aurum has a huge fatigue penalty and minor armour bonus compared to dragonbone. This sets the scaling of the high tier metals in line with tiers 1-7.</description>
+              <files>
+                <folder source="Dain's Fixes/Tweaks/Awakening Metal Scaling" destination="packages/core/override/Dain's Fixes/Tweaks/Awakening Metal Scaling"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Blizzard disabling effects">
+              <description>Existing behaviour only checks once each to slip and freeze - when entering the blizzard, and on the third (globally, not per unit) heartbeat respectively. Blizzard now has a 12.5% chance to do each of those actions on every heartbeat (75% chance of no effect). The freeze may also now allow enemies to be shattered.</description>
+              <files>
+                <folder source="Dain's Fixes/Tweaks/Blizzard disabling effects" destination="packages/core/override/Dain's Fixes/Tweaks/Blizzard disabling effects"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Blood Control">
+              <description>If combat ends while an enemy is still charmed, the effect ends immediately and remaining DOT is dealt instantly.</description>
+              <files>
+                <folder source="Dain's Fixes/Tweaks/Blood Control" destination="packages/core/override/Dain's Fixes/Tweaks/Blood Control"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Crushing Prison disables bosses">
+              <description>Crushing prison can now disable bosses. With a base duration of 9s, it's still a weaker disable than many that can already target bosses, so I see no reason why CP (and only CP) should have that exception. Contains the fix above; using both isn't needed.</description>
+              <files>
+                <folder source="Dain's Fixes/Tweaks/Crushing Prison disables bosses" destination="packages/core/override/Dain's Fixes/Tweaks/Crushing Prison disables bosses"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Dog Inspiration">
+              <description>Dog starts with a massive dexterity inspiration. This is almost classified as a fix, as it's all in the game just the dog can't gain or lose approval to trigger receiving it.</description>
+              <files>
+                <folder source="Dain's Fixes/Tweaks/Dog Inspiration" destination="packages/core/override/Dain's Fixes/Tweaks/Dog Inspiration"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Don't dispel 3rd party modals">
+              <description>Dispel no longer removes buffs from third party sustains. For example, it won't remove Haste provided by another mage. If dispel is cast on the mage sustaining the effect, it will still be deactivated.</description>
+              <files>
+                <folder source="Dain's Fixes/Tweaks/Don't dispel 3rd party modals" destination="packages/core/override/Dain's Fixes/Tweaks/Don't dispel 3rd party modals"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Dual Striking reduces anim speed">
+              <description>Makes dual striking increase animation time by +25%. Used to counterbalance the big power increase from the fix to the broken animation above. The tweak and fix are independent; use both.</description>
+              <files>
+                <folder source="Dain's Fixes/Tweaks/Dual Striking reduces anim speed" destination="packages/core/override/Dain's Fixes/Tweaks/Dual Striking reduces anim speed"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Follower scaling">
+              <description>Caps autoscaling of allies to level 7. The goal is to prevent autoscale from ruining followers that join later, not to remove their build identities.</description>
+              <files>
+                <folder source="Dain's Fixes/Tweaks/Follower scaling" destination="packages/core/override/Dain's Fixes/Tweaks/Follower scaling"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Lucky">
+              <description>Implemented the item property. Gives +1% crit chance, evasion and spell resistance per power level.</description>
+              <files>
+                <folder source="Dain's Fixes/Tweaks/Lucky" destination="packages/core/override/Dain's Fixes/Tweaks/Lucky"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Qunari attributes">
+              <description>Qunari don't have any racial bonuses. Added +3 Str and +1 Dex as their attribute bonus.</description>
+              <files>
+                <folder source="Dain's Fixes/Tweaks/Qunari attributes" destination="packages/core/override/Dain's Fixes/Tweaks/Qunari attributes"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Random encounter frequency">
+              <description>Greatly increased the chance of the starmetal encounter, slightly increased chances of other easter egg encounters.</description>
+              <files>
+                <folder source="Dain's Fixes/Tweaks/Random encounter frequency" destination="packages/core/override/Dain's Fixes/Tweaks/Random encounter frequency"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Random encounter frequency (Awakening)">
+              <description>Many of the awakening encounters are never able to trigger, and transit becomes a dull affair. Fixed their trigger conditions.</description>
+              <files>
+                <folder source="Dain's Fixes/Tweaks/Random encounter frequency (Awakening)" destination="packages/core/override/Dain's Fixes/Tweaks/Random encounter frequency (Awakening)"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Rewards from all kills">
+              <description>Enemies killed by other enemies now grant xp to the party and may generate random loot.</description>
+              <files>
+                <folder source="Dain's Fixes/Tweaks/Rewards from all kills" destination="packages/core/override/Dain's Fixes/Tweaks/Rewards from all kills"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Shield offensive talents">
+              <description>Changed shield base damage, and changed the damage calculations when shield mastery is present to be more in line with their descriptions. Shield base damage in vanilla is hard coded as 5, with a maximum damage of 0. Instead gave shields their own damages: Small shield: 1 Round shield: 2 Kite shield: 3 Large shield: 5 All have a damage range of 1.4 (i.e. the max damage is 1.4x the base damage, so a large shield does 5-7 damage). Damage scales with material. This is a net buff (albeit a minor one), except for small shields and low tier round shields. Shield bash - (with shield mastery) doubles the attribute bonus, instead of adding it a second time. This increases critical damage, and changes the probability distribution of damage (two random numbers are more likely to be near the mean, rather than extremes). Shield pummel - as with shield bash, doubled the attribute bonus on the shield hits rather than adding it a second time. Overpower - no direct change. However, shield mastery in vanilla set it to use shield max damage (0), rather than within the damage range. This actually reduced its damage. With the modified shield damage, shield mastery now results in an increase in damage (as presumably intended). Assault - no change.</description>
+              <files>
+                <folder source="Dain's Fixes/Tweaks/Shield offensive talents" destination="packages/core/override/Dain's Fixes/Tweaks/Shield offensive talents"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Silverite Asala">
+              <description>Changes the material of Asala to Silverite so that it's actually a viable weapon by the time you get it.</description>
+              <files>
+                <folder source="Dain's Fixes/Tweaks/Silverite Asala" destination="packages/core/override/Dain's Fixes/Tweaks/Silverite Asala"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Spider Queen">
+              <description>Fixes some cases where the Corrupted Spider Queen won't trigger web traps or summon reinforcements, and increases the damage of her Poison Spit talent by 50%. A 2x multiplier was originally implemented in game code but is commented out with the note "removed, too powerful". The DOT stacking fix applies a severe nerf to this ability however, so this tweak is to restore the vanilla difficulty of the fight.</description>
+              <files>
+                <folder source="Dain's Fixes/Tweaks/Spider Queen" destination="packages/core/override/Dain's Fixes/Tweaks/Spider Queen"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Uncap health regen">
+              <description>Increases the health regen cap from +20 per 2s tick to +100. Mostly a big buff to the Regeneration spell and Shale's Regenerative Burst.</description>
+              <files>
+                <folder source="Dain's Fixes/Tweaks/Uncap health regen" destination="packages/core/override/Dain's Fixes/Tweaks/Uncap health regen"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Winter's Grasp freeze">
+              <description>Target must now pass a physical resistance check to resist freeze, rather than it being level based (previously was 5% per level, max 95% at level 19+). Frozen targets can now be shattered.</description>
+              <files>
+                <folder source="Dain's Fixes/Tweaks/Winter's Grasp freeze" destination="packages/core/override/Dain's Fixes/Tweaks/Winter's Grasp freeze"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+          </plugins>
+        </group>
+      </optionalFileGroups>
+    </installStep>
+    <installStep name="Cosmetic Changes (Optional)">
+      <optionalFileGroups order="Explicit">
+        <group name="Cosmetic" type="SelectAny">
+          <plugins order="Explicit">
+            <plugin name="Bergen's Honor">
+              <description>Uses the winged helmet model as per its icon.</description>
+              <files>
+                <folder source="Dain's Fixes/Cosmetic/Bergen's Honor" destination="packages/core/override/Dain's Fixes/Cosmetic/Bergen's Honor"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Chasind Great Maul">
+              <description>Uses the chasind crusher model rather than the generic maul.</description>
+              <files>
+                <folder source="Dain's Fixes/Cosmetic/Chasind Great Maul" destination="packages/core/override/Dain's Fixes/Cosmetic/Chasind Great Maul"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Staff of the Magister Lord">
+              <description>Uses the twisting metal model as per its icon.</description>
+              <files>
+                <folder source="Dain's Fixes/Cosmetic/Staff of the Magister Lord" destination="packages/core/override/Dain's Fixes/Cosmetic/Staff of the Magister Lord"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="The Edge">
+              <description>Uses the crow dagger model as per its icon.</description>
+              <files>
+                <folder source="Dain's Fixes/Cosmetic/The Edge" destination="packages/core/override/Dain's Fixes/Cosmetic/The Edge"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Varathorn's Ironbark Armour">
+              <description>If you give Varathorn ironbark and ask for armour, he'll turn it into... silverite? Changed the material of the reward to ironbark (and increased the armour enchantment slightly so that it retains its original power).</description>
+              <files>
+                <folder source="Dain's Fixes/Cosmetic/Varathorn's Ironbark Armour" destination="packages/core/override/Dain's Fixes/Cosmetic/Varathorn's Ironbark Armour"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Warden Tower Shield description">
+              <description>Changed its description so that it's not an exact duplicate of Duncan's shield.</description>
+              <files>
+                <folder source="Dain's Fixes/Cosmetic/Warden Tower Shield description" destination="packages/core/override/Dain's Fixes/Cosmetic/Warden Tower Shield description"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+          </plugins>
+        </group>
+      </optionalFileGroups>
+    </installStep>
+    <installStep name="Quality of Life Changes (Optional)">
+      <optionalFileGroups order="Explicit">
+        <group name="Quality of Life" type="SelectAny">
+          <plugins order="Explicit">
+            <plugin name="Apply party buffs to new members">
+              <description>Applies partywide buffs (Flaming Weapons, Frost Weapons, Haste, Telekinetic Weapons, Song of Valour, Song of Courage) to party members when they are switched in, revived or summoned.</description>
+              <files>
+                <folder source="Dain's Fixes/Quality of Life/Apply party buffs to new members" destination="packages/core/override/Dain's Fixes/Quality of Life/Apply party buffs to new members"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Autoloot containers">
+              <description>Automatically loots containers when opened. Will instead open the inventory screen if inventory is full, or the container has a plot item or item which triggers an event on pickup (such as adding a codex entry).</description>
+              <files>
+                <folder source="Dain's Fixes/Quality of Life/Autoloot containers" destination="packages/core/override/Dain's Fixes/Quality of Life/Autoloot containers"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Autoloot kills">
+              <description>Automatically loots any enemies killed by the party at the end of combat. Flashes a warning if the party's inventory is full.</description>
+              <files>
+                <folder source="Dain's Fixes/Quality of Life/Autoloot kills" destination="packages/core/override/Dain's Fixes/Quality of Life/Autoloot kills"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Display received items">
+              <description>Displays the name of any item(s) received. The color and duration can be customised by editing the rcvitem_opts.gda file with GDApp. By default it's green and appears for 2 seconds.</description>
+              <files>
+                <folder source="Dain's Fixes/Quality of Life/Display received items" destination="packages/core/override/Dain's Fixes/Quality of Life/Display received items"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Fast move out of combat">
+              <description>Increases movement speed out of combat by 50%. Note that the buff will stick around in save games if the mod is removed - resave games with the included remover to fully uninstall. The size of the increase can be adjusted by editing fastmove_speed.gda with GDApp.</description>
+              <files>
+                <folder source="Dain's Fixes/Quality of Life/Fast move out of combat" destination="packages/core/override/Dain's Fixes/Quality of Life/Fast move out of combat"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Hide Shale crystal VFX">
+              <description>Hides flames/sparks/etc on Shale's fists when higher tier crystals are equipped.</description>
+              <files>
+                <folder source="Dain's Fixes/Quality of Life/Hide Shale crystal VFX" destination="packages/core/override/Dain's Fixes/Quality of Life/Hide Shale crystal VFX"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Hide modal AoE VFX">
+              <description>Hides the aura effect of AoE spells and talents such as Rally. Effects show for 2 seconds then are hidden. Exceptions can be added by adding the appropriate ability ID code to vfxwhitelist_aoevfx.gda with GDApp.</description>
+              <files>
+                <folder source="Dain's Fixes/Quality of Life/Hide modal AoE VFX" destination="packages/core/override/Dain's Fixes/Quality of Life/Hide modal AoE VFX"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Hide modal VFX">
+              <description>Hides the crust VFX of modal talents. Effects show for 2 seconds then are hidden. Exceptions can be added by adding the appropriate ability ID code to vfxwhitelist_vfx.gda with GDApp. By default stealth is included as an exception.</description>
+              <files>
+                <folder source="Dain's Fixes/Quality of Life/Hide modal VFX" destination="packages/core/override/Dain's Fixes/Quality of Life/Hide modal VFX"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Hide weapon VFX crusts">
+              <description>Hides the crust VFX on weapons from enchantments, both inherent/runes and applied by mages. Effects show for 2 seconds then are hidden. Stealth's crust is sadly hard-coded in the engine and can't be removed. Doesn't work for telekinetic weapons because it's special, see...</description>
+              <files>
+                <folder source="Dain's Fixes/Quality of Life/Hide weapon VFX crusts" destination="packages/core/override/Dain's Fixes/Quality of Life/Hide weapon VFX crusts"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Hide weapon VFX telekinetic">
+              <description>Hides the crust VFX on telekinetic weapons. No fancy fade out here sadly, just no animation at all.</description>
+              <files>
+                <folder source="Dain's Fixes/Quality of Life/Hide weapon VFX telekinetic" destination="packages/core/override/Dain's Fixes/Quality of Life/Hide weapon VFX telekinetic"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="HoH strength req">
+              <description>Removes the strength requirement from Helm of Honnleath. Inspiration for this was it bugging out with the No Helmet Hack on my low-strength rogues.</description>
+              <files>
+                <folder source="Dain's Fixes/Quality of Life/HoH strength req" destination="packages/core/override/Dain's Fixes/Quality of Life/HoH strength req"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Modal exploration irritations">
+              <description>Removed the damage heartbeat from Blood Thirst, The Tainted Blade and Aura of Pain during exploration, and Berserk preventing stamina regen while exploring.</description>
+              <files>
+                <folder source="Dain's Fixes/Quality of Life/Modal exploration irritations" destination="packages/core/override/Dain's Fixes/Quality of Life/Modal exploration irritations"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Mute modal AoE SFX">
+              <description>Mutes the "boom" sound from entering Rally's AoE, and the periodic shockwaves from Air of Insolence.</description>
+              <files>
+                <folder source="Dain's Fixes/Quality of Life/Mute modal AoE SFX" destination="packages/core/override/Dain's Fixes/Quality of Life/Mute modal AoE SFX"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Party skill for disarm">
+              <description>When disarming traps, checks for the skill level of the most talented rogue in the party, rather than the disarming character. Also reduces the disarm time from 3 seconds to 0.1 second and removes the kneeling animation. Does not apply in combat.</description>
+              <files>
+                <folder source="Dain's Fixes/Quality of Life/Party skill for disarm" destination="packages/core/override/Dain's Fixes/Quality of Life/Party skill for disarm"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Party skill for unlock">
+              <description>When unlocking doors and chests, checks for the skill level of the most talented rogue in the party, rather than the disarming character. See the "Party members unlock" extra if you want a more immersive version where the rogue unlocks it themselves.</description>
+              <files>
+                <folder source="Dain's Fixes/Quality of Life/Party skill for unlock" destination="packages/core/override/Dain's Fixes/Quality of Life/Party skill for unlock"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Quiet Singing">
+              <description>Removes the obnoxious war cry sound effect from Song of Valour and Song of Courage.</description>
+              <files>
+                <folder source="Dain's Fixes/Quality of Life/Quiet Singing" destination="packages/core/override/Dain's Fixes/Quality of Life/Quiet Singing"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Reactivate modals outside combat">
+              <description>Berserk, Aura of Pain and Blood Magic are reactivated when the game disables them outside of combat. Feign Death and Captivate are still left as is.</description>
+              <files>
+                <folder source="Dain's Fixes/Quality of Life/Reactivate modals outside combat" destination="packages/core/override/Dain's Fixes/Quality of Life/Reactivate modals outside combat"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Stealing Cooldown">
+              <description>Reduces the cooldown on stealing to 0.5 seconds.</description>
+              <files>
+                <folder source="Dain's Fixes/Quality of Life/Stealing Cooldown" destination="packages/core/override/Dain's Fixes/Quality of Life/Stealing Cooldown"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Stealing no stealth drop">
+              <description>Stealing no longer drops the thief out of stealth.</description>
+              <files>
+                <folder source="Dain's Fixes/Quality of Life/Stealing no stealth drop" destination="packages/core/override/Dain's Fixes/Quality of Life/Stealing no stealth drop"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="True display damage">
+              <description>Shows the true average damage in the inventory screen. Bioware's calculation is incorrect and also has a rather weird fudge applied to it based on attack timings that isn't true to the actual timing calculation. By default this doesn't incorporate crits or on-hit effects in the damage calculation, but they can be enabled by editing dfopts_displaydmg.gda with GDApp.</description>
+              <files>
+                <folder source="Dain's Fixes/Quality of Life/True display damage" destination="packages/core/override/Dain's Fixes/Quality of Life/True display damage"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+          </plugins>
+        </group>
+      </optionalFileGroups>
+    </installStep>
+  </installSteps>
+</config>

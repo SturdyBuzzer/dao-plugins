@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<fomod xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/Cutleast/FOMOD-Creation-Kit/master/res/schemas/info.xsd">
+	<Name>Dain's Fixes - Extras</Name>
+	<Author>dainbramage</Author>
+	<Version>4.2.2</Version>
+	<Website>https://www.nexusmods.com/dragonage/mods/4384</Website>
+	<Description>Alternative changes, more balance affecting, high compatibility risk and differently installed changes go here.</Description>
+</fomod>

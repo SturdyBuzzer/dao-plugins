@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/Cutleast/FOMOD-Creation-Kit/master/res/schemas/ModConfig5.0.xsd">
+  <moduleName>Dain's Fixes</moduleName>
+  <installSteps order="Explicit">
+    <installStep name="Extras (Optional)">
+      <optionalFileGroups order="Explicit">
+        <group name="Xtras" type="SelectAny">
+          <plugins order="Explicit">
+            <plugin name="Autoloot kills (conservative)">
+              <description>Alternative to Autoloot kills that does not loot any enemy holding a plot item or item which triggers an event on pickup.</description>
+              <files>
+                <folder source="Extras/packages/core/override/Dain's Fixes/Xtras/Autoloot kills (conservative)" destination="packages/core/override/Dain's Fixes/Xtras/Autoloot kills (conservative)"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Blood Control damage on resist">
+              <description>Now only applies damage when the target can't be charmed (due to having dialogue) or it passes the mental resistance check.</description>
+              <files>
+                <folder source="Extras/packages/core/override/Dain's Fixes/Xtras/Blood Control damage on resist" destination="packages/core/override/Dain's Fixes/Xtras/Blood Control damage on resist"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Desire Demon Nightmare">
+              <description>Makes Desire Demons prioritise casting Horror on any sleeping enemies. Only applicable if Monster abilities fix is installed, otherwise they won't be able to put anything to sleep.</description>
+              <files>
+                <folder source="Extras/packages/core/override/Dain's Fixes/Xtras/Desire Demon Nightmare" destination="packages/core/override/Dain's Fixes/Xtras/Desire Demon Nightmare"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin> 
+            <plugin name="Destroyer">
+              <description>Changed to proc on normal hits as well as crits, as per description.</description>
+              <files>
+                <folder source="Extras/packages/core/override/Dain's Fixes/Xtras/Destroyer" destination="packages/core/override/Dain's Fixes/Xtras/Destroyer"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Dual Weapon Expert duration">
+              <description>Alternative to DWE fix above that additionally sets the duration to a flat 5 seconds rather than increasing with level.</description>
+              <files>
+                <folder source="Extras/packages/core/override/Dain's Fixes/Xtras/Dual Weapon Expert duration" destination="packages/core/override/Dain's Fixes/Xtras/Dual Weapon Expert duration"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Dual Weapon Sweep crits">
+              <description>Alternative to the Dual Weapon Sweep fix above that additionally allows Dual Weapon Sweep to score critical hits.</description>
+              <files>
+                <folder source="Extras/packages/core/override/Dain's Fixes/Xtras/Dual Weapon Sweep crits" destination="packages/core/override/Dain's Fixes/Xtras/Dual Weapon Sweep crits"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>                       
+            <plugin name="Hard squash weapon vfx">
+              <description>Fully removes all weapon crust vfx from abilities and items that create them. No fade out effect and may have compatibility issues. Makes both Hide weapon VFX crusts QOLs redundant.</description>
+              <files>
+                <folder source="Extras/packages/core/override/Dain's Fixes/Xtras/Hard squash weapon vfx" destination="packages/core/override/Dain's Fixes/Xtras/Hard squash weapon vfx"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Item stat requirements">
+              <description>Enforces minimum attribute requirements for items - if an item is equipped via temporary attributes that are then removed, the offending item(s) will be unequipped once the inventory screen is closed.</description>
+              <files>
+                <folder source="Extras/packages/core/override/Dain's Fixes/Xtras/Item stat requirements" destination="packages/core/override/Dain's Fixes/Xtras/Item stat requirements"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Modcore">
+              <description>module_core override. Fixes bug with autopause triggering multiple times, refreshes displayed damage when inventory screen is opened instead of having to change equipment, and prevents Berserk, Blood Magic and Aura of Pain sustains being turned off outside combat. Makes QOL -  Reactivate modals outside combat redundant. Displayed damage conforms with true display damage QOL and Show DPS in inventory extra if they are installed.</description>
+              <files>
+                <folder source="Extras/packages/core/override/Dain's Fixes/Xtras/Modcore" destination="packages/core/override/Dain's Fixes/Xtras/Modcore"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Nature damage spells">
+              <description>Changes Stonefist, Walking Bomb and Virulent Walking Bomb to deal nature damage as per their descriptions. If you want it for one but not the other, delete the abi_xxx.gda file inside this folder for the unwanted skill. E.g. if you want physical damage for Stonefist but nature for (virulent) walking bomb, delete abi_stonefist.gda.</description>
+              <files>
+                <folder source="Extras/packages/core/override/Dain's Fixes/Xtras/Nature damage spells" destination="packages/core/override/Dain's Fixes/Xtras/Nature damage spells"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Party members unlock">
+              <description>If the controlled character fails to unlock a door or chest and there is a capable rogue in the party, they will automatically unlock it. No attempt will be made if a key's required, the object isn't pickable, or the rogue's skill is insufficient. Remove Party skill for unlock if you want to use this as it will take precedence.</description>
+              <files>
+                <folder source="Extras/packages/core/override/Dain's Fixes/Xtras/Party members unlock" destination="packages/core/override/Dain's Fixes/Xtras/Party members unlock"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Ranged talent aim time">
+              <description>Removes the additional aim time added whenever ranged talents are used. Beware - this applies equally to enemy archers!</description>
+              <files>
+                <folder source="Extras/packages/core/override/Dain's Fixes/Xtras/Ranged talent aim time" destination="packages/core/override/Dain's Fixes/Xtras/Ranged talent aim time"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Show DPS in inventory">
+              <description>Shows the character's DPS in the inventory screen instead of average damage. By default this includes crits but not on-hit effects, but these can be customised by editing dfopts_displaydps.gda with GDApp. Replaces QOL - True display damage.</description>
+              <files>
+                <folder source="Extras/packages/core/override/Dain's Fixes/Xtras/Show DPS in inventory" destination="packages/core/override/Dain's Fixes/Xtras/Show DPS in inventory"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>         
+          </plugins>
+        </group>
+      </optionalFileGroups>
+    </installStep>
+    <installStep name="Tactics slots (Optional)">
+      <optionalFileGroups order="Explicit">
+        <group name="Tactics slots (Origins)" type="SelectAny">
+          <plugins order="Explicit">
+            <plugin name="Tactics Slots - Origins">
+              <description>Origins version - Significantly increases the number of tactics slots available for all characters (will need to wait until level-up to be applied to existing characters).</description>
+              <files>
+                <folder source="Extras/modules/Single Player/override/Dain's Fixes/Xtras/Tactics Slots" destination="packages/core/override/Dain's Fixes/Xtras/Tactics Slots"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Tactics Slots - Awakening">
+              <description>Awakening version - Significantly increases the number of tactics slots available for all characters (will need to wait until level-up to be applied to existing characters).</description>
+              <files>
+                <folder source="Extras/packages/core_ep1/override/Dain's Fixes/Xtras/Tactics Slots (Awakening)" destination="packages/core_ep1/override/Dain's Fixes/Xtras/Tactics Slots (Awakening)"/>
+              </files>
+              <typeDescriptor>
+                <type name="Optional"/>
+              </typeDescriptor>
+            </plugin>       
+          </plugins>
+        </group>
+      </optionalFileGroups>
+    </installStep>
+  </installSteps>
+</config>

@@ -8,6 +8,11 @@ basic_games/games/*
 !basic_games/games/game_dao.py
 !basic_games/games/dao_game/
 !basic_games/games/dao_game/*.*
+!basic_games/games/dao_game/DAO_FOMOD/
+!basic_games/games/dao_game/DAO_FOMOD/*
+!basic_games/games/dao_game/DAO_FOMOD/*/checksum
+!basic_games/games/dao_game/DAO_FOMOD/*/info.xml
+!basic_games/games/dao_game/DAO_FOMOD/*/ModuleConfig.xml
 !dao_plugins/
 !dao_plugins/*.*
 !dao_tools/

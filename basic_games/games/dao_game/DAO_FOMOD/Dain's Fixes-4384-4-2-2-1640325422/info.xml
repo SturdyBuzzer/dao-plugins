@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<fomod xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/Cutleast/FOMOD-Creation-Kit/master/res/schemas/info.xsd">
+	<Name>Dain's Fixes</Name>
+	<Author>dainbramage</Author>
+	<Version>4.2.2</Version>
+	<Website>https://www.nexusmods.com/dragonage/mods/4384</Website>
+	<Description>A collection of gameplay fixes, tweaks and quality of life changes.</Description>
+</fomod>

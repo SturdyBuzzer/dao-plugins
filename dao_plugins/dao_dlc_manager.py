@@ -1,4 +1,3 @@
-import hashlib
 import mobase
 import os
 import urllib.request
@@ -416,7 +415,7 @@ class DAODLCManager(mobase.IPluginTool):
             target_name =f"{uid}.zip"
             target_path = DAOUtils.os_path(download_path, target_name)
             # Check if file already downloaded
-            if DAOUtils.file_exists(target_path) and self._validate_checksum(target_path, checksum):
+            if DAOUtils.file_exists(target_path) and DAOUtils.validate_checksum(target_path, checksum):
                 DAOUtils.log_message(f"File already exists: {target_name}.")
                 continue
             url = dlc_item.get("URL", "")
@@ -428,7 +427,7 @@ class DAODLCManager(mobase.IPluginTool):
                 result.remove(name)
                 continue  
             # Validate downloaded file          
-            if not self._validate_checksum(target_path, checksum):
+            if not DAOUtils.validate_checksum(target_path, checksum):
                 result.remove(name)
         return result
 
@@ -512,21 +511,6 @@ class DAODLCManager(mobase.IPluginTool):
         except Exception as e:
             DAOUtils.log_message(f"Failed to download {file_name}: {e}")
             return False
-            
-    def _validate_checksum(self, target_path: str, checksum: str) -> bool:
-        """Uses file checksum to validate file"""
-        sha256 = hashlib.sha256()
-        try:
-            with open(target_path, "rb") as f:
-                for chunk in iter(lambda: f.read(8192), b""):
-                    sha256.update(chunk)
-            if sha256.hexdigest() != checksum:
-                DAOUtils.log_message(f"Failed to validate: {target_path}")
-                return False
-            return True
-        except Exception as e:
-            DAOUtils.log_message(f"Failed to validate: {target_path}: {e}")
-            return False  
                     
     def _install_dlc_archives(self, result: set[str]) -> set[str]:
         """Install the downloaded DLC archives to dlc_location"""
