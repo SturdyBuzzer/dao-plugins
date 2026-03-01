@@ -35,8 +35,8 @@ class DAOModDataChecker(mobase.ModDataChecker):
         return filetree 
        
     _dir_list = (
-        "addins", "bin_ship", "docs", "logs", "mo2unpack", "offers", 
-        "packages/core/data", "packages/core/override", "settings" 
+        "addins", "bin_ship", "docs", "logs", "modules", "mo2unpack", "offers", 
+        "packages/core_ep1","packages/core/data", "packages/core/override", "settings" 
         )
     
     _archive_extensions = {"dazip", "override"}
