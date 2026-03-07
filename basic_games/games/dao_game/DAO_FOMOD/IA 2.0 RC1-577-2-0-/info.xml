@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<fomod xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/Cutleast/FOMOD-Creation-Kit/master/res/schemas/info.xsd">
+	<Name>Improved Atmosphere</Name>
+	<Author>SpaceAlex</Author>
+	<Version>2.0 RC1</Version>
+	<Website>https://www.nexusmods.com/dragonage/mods/577</Website>
+	<Description>Greatly improves ambient NPC behavior; adds hundreds of new items and then equips most NPCs with them in an attempt to improve immersion; adds new ways to handle certain situations; recreates cut content; fixes many vanilla bugs; adds dozens of new color tints... and much more. Most additions and changes are optional.</Description>
+</fomod>

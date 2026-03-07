@@ -34,6 +34,10 @@ COPY /Y "%HOME%\basic_games\games\dao_game\DAO_Addins.xml" "%ARCHIVE%\basic_game
 COPY /Y "%HOME%\basic_games\games\dao_game\DAO_Offers.xml" "%ARCHIVE%\basic_games\games\dao_game\DAO_Offers.xml"
 
 ECHO:
+ECHO Copying Game DAO_FOMOD files.
+XCOPY /E /I /Y /Q "%HOME%\basic_games\games\dao_game\DAO_FOMOD" "%ARCHIVE%\basic_games\games\dao_game\DAO_FOMOD"
+
+ECHO:
 ECHO Copying DAO Tools plugin files.
 COPY /Y "%HOME%\dao_plugins\__init__.py" "%ARCHIVE%\dao_plugins\__init__.py"
 COPY /Y "%HOME%\dao_plugins\dao_conflict_checker.py" "%ARCHIVE%\dao_plugins\dao_conflict_checker.py"
@@ -51,4 +55,3 @@ tar -a -c -f "%RELEASE%\ModOrganizer-DAO-Plugins.%VERSION%.zip" -C "%ARCHIVE%" b
 
 ECHO:
 ECHO Done. DAO_Support_Plugin built.
-

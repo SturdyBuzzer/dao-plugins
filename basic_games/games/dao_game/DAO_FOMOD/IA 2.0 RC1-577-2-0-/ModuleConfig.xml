@@ -1,0 +1,822 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/Cutleast/FOMOD-Creation-Kit/master/res/schemas/ModConfig5.0.xsd">
+  <moduleName>Improved Atmosphere</moduleName>
+  <installSteps order="Explicit">
+    <installStep name="1. Global">
+      <optionalFileGroups order="Explicit">
+        <group name="1.1 Animations" type="SelectAny">
+          <plugins order="Explicit">
+            <plugin name="Animations">
+              <description>Adds many new animation presets to be used by game characters, and replaces one
+previously unused animation with a new one that makes using the blacksmith series of
+animations (forging a blade) usable. The animations are not perfect (there is some clipping
+and NPC's don't use the hammer correctly), but it's still much better than nothing.
+Besides, unless you position your camera right next to the NPC blacksmith, you won't
+even notice anything's off.</description>
+              <conditionFlags>
+                <flag name="require_11_animations">selected</flag>
+              </conditionFlags>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+          </plugins>
+        </group>
+        <group name="1.2 Materials" type="SelectAny">
+          <plugins order="Explicit">
+            <plugin name="Materials - Main">
+              <description>Requirements: 1.3 Tints - Custom ;
+              
+Adds several new materials to the game: Awakening materials for Origins (White Steel,
+Volcanic Aurum, Dragon Wing, High Dragon Hide, Vhenadahl, and Ancestral Heartwood),
+Golderite (better than Silverite but worse than Dragonbone), Blue Steel (marginally better
+than Dragonbone), Dragonscale (between White Steel and Volcanic Aurum), Fade Metal
+(similar to Golderite but lighter) and Elder Dragonbone (marginally better than Volcanic
+Aurum). It also makes wood available to be used on weapons, such as the staves.
+Additionally, a more detailed or accurate description of some item enchantments &amp;
+properties (increased mana/stamina, increased chance to avoid missile attacks, reduced aim
+time, etc.) is provided.</description>
+              <conditionFlags>
+                <flag name="require_12_materials">selected</flag>
+                <flag name="require_13_tints_custom">selected</flag>
+              </conditionFlags>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Materials - Optional">
+              <description>Contains several changes done to material stats. Although it's not recommended,
+these changes may be reversed by deleting the GDA files containing them or by deleting
+the entire folder. The changes are as follows:
+- Starmetal was turned into one of the best materials in the game. Only Volcanic
+Aurum can stand up to it, which is better than Starmetal in some ways, but worse
+in others. (contained in materialrules_gwb.GDA)
+- Starmetal was given a completely new tint. (contained in materialtypes_gwb.GDA)
+- Lowered strength or dexterity requirements of Tier 8 and Tier 9 materials so they
+can be used by Origins characters. (contained in materialrules_gxa.gda)
+- All Awakening materials were given a completely new tint, made from scratch.
+(contained in materialtypes_gxa.GDA)
+- Material progression used for Darkspawn weapons has been changed from
+Iron/Grey Iron/Steel to Iron/Grey Iron/Red Steel/Dragonbone. (contained in
+TS_Material_IA.GDA)</description>
+              <files>
+                <folder source="Improved Atmosphere/1. Global/1.2. Materials/Optional" destination="packages/core/override/Improved Atmosphere/1. Global/1.2. Materials/Optional"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+          </plugins>
+        </group>
+        <group name="1.3 Tints" type="SelectAny">
+          <plugins order="Explicit">
+            <plugin name="Tints - Custom">
+              <description>New tints that don't outright replace any vanilla ones. Even if you're
+using a different tint mod, do not delete this folder if you're also using "1.4. Items", as the
+tints here are needed for some custom items to look properly.</description>
+              <conditionFlags>
+                <flag name="require_13_tints_custom">selected</flag>
+              </conditionFlags>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Tints - Replacers">
+              <description>Requirements: 1.3 Tints - Custom;
+              
+As the name implies, these replace certain vanilla material tints,
+which are: Red Steel, Silverite, Dragonbone, Inscribed Leather, Drakescale Leather, and
+Dragonthorn. If you have a mod which also replaces these tints, and you would like to keep
+them, you may delete this folder.</description>
+              <conditionFlags>
+                <flag name="require_13_tints_custom">selected</flag>
+              </conditionFlags>
+              <files>
+                <folder source="Improved Atmosphere/1. Global/1.3. Tints/Replacers" destination="packages/core/override/Improved Atmosphere/1. Global/1.3. Tints/Replacers"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+          </plugins>
+        </group>
+        <group name="1.4 Items" type="SelectAny">
+          <plugins order="Explicit">
+            <plugin name="Items">
+              <description>Requirements: 1.2 Materials, 1.3 Tints - Custom;
+              
+Adds many new unique and common unscaled items, with properties matching the game's
+default items. You can acquire some of these items by visiting stores or looting placeables
+scattered around the game world, provided you have the appropriate modules (Merchants,
+Placeables) active. Existing (default) items were also modified: Some now sport a different
+appearance (raging from simple color changes to whole new models), while others found
+themselves remade in a different material and/or infused with different properties. This was
+done for a variety of reasons (amongst others, to increase both look and function variety),
+but rest assured, the changes will not unbalance the game.
+
+Some outstanding visual bugs, such as the human female mage apprentice model not
+displaying correctly, were also fixed. And if you own Awakening, you most likely fell
+victim to a number of bugs that also affected the Origins campaign. For example, there is
+an issue with one of the generic massive helmet models being replaced with an unique
+model, and then there is the infamous "Sentinel Armor bug". These bugs have all been
+fixed.</description>
+              <conditionFlags>
+                <flag name="require_12_materials">selected</flag>
+                <flag name="require_13_tints_custom">selected</flag>
+                <flag name="require_14_items">selected</flag>
+              </conditionFlags>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+          </plugins>
+        </group>
+      </optionalFileGroups>
+    </installStep>
+    <installStep name="2. Modules">
+      <optionalFileGroups order="Explicit">
+        <group name="2.1 Areas" type="SelectAny">
+          <plugins order="Explicit">
+            <plugin name="Areas">
+              <description>Requirements: 1.1 Animations, 2.4 Conversations, 2.5 Scripts;
+              
+Modified modules – this is the heart of the mod, the reason I started this project. If you
+want NPC's to behave more realistically (they'll be moving around, resting, sitting, etc.),
+more party banter triggers, party picker enabled in more areas and so much more, you’ll
+want to leave this in your override</description>
+              <conditionFlags>
+                <flag name="require_11_animations">selected</flag>
+                <flag name="require_21_areas">selected</flag>
+                <flag name="require_24_conversations">selected</flag>
+                <flag name="require_25_scripts">selected</flag>
+              </conditionFlags>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+          </plugins>
+        </group>
+        <group name="2.2 Characters" type="SelectAny">
+          <plugins order="Explicit">
+            <plugin name="Characters">
+              <description>Requirements: 1.2 Materials, 1.3 Tints - Custom, 1.4 Items;
+              
+The character (.utc) files in this folder mostly dictate what NPC’s wear. Almost all NPC’s in
+the game were given a different outfit: one that better suits their personalities and
+professions. Many NPC’s now also wear equipment that is no longer scaled, which means
+that not everyone will wear iron at the beginning or dragonbone near the end. Hopefully,
+this will make the game slightly more atmospheric, and give important NPC's the
+uniqueness they deserve.</description>
+              <conditionFlags>
+                <flag name="require_12_materials">selected</flag>
+                <flag name="require_13_tints_custom">selected</flag>
+                <flag name="require_14_items">selected</flag>
+              </conditionFlags>
+              <files>
+                <folder source="Improved Atmosphere/2. Modules/2.2. Characters" destination="packages/core/override/Improved Atmosphere/2. Modules/2.2. Characters"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+          </plugins>
+        </group>
+        <group name="2.3 Placeables" type="SelectAny">
+          <plugins order="Explicit">
+            <plugin name="Placeables">
+              <description>Requirements: 1.2 Materials, 1.3 Tints - Custom, 1.4 Items;
+              
+              Adds a few new items into certain crates, chests, closets or, in short, placeables.</description>
+              <conditionFlags>
+                <flag name="require_12_materials">selected</flag>
+                <flag name="require_13_tints_custom">selected</flag>
+                <flag name="require_14_items">selected</flag>
+              </conditionFlags>              
+              <files>
+                <folder source="Improved Atmosphere/2. Modules/2.3. Placeables" destination="packages/core/override/Improved Atmosphere/2. Modules/2.3. Placeables"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+          </plugins>
+        </group>
+        <group name="2.4 Conversations" type="SelectAny">
+          <plugins order="Explicit">
+            <plugin name="Conversations">
+              <description>Requirements: 1.1 Animations, 2.1 Areas, 2.5 Scripts;
+              
+Included are dialog files that were edited for bug fixes and restored lines. Additionally, a
+number of cutscenes and stages were also tweaked to be able to complement the new
+ambient behaviors.</description>
+              <conditionFlags>
+                <flag name="require_11_animations">selected</flag>
+                <flag name="require_21_areas">selected</flag>
+                <flag name="require_24_conversations">selected</flag>
+                <flag name="require_25_scripts">selected</flag>
+              </conditionFlags>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+          </plugins>
+        </group>
+        <group name="2.5 Scripts" type="SelectAny">
+          <plugins order="Explicit">
+            <plugin name="Scripts">
+              <description>Requirements: 1.1 Animations, 2.1 Areas, 2.4 Conversations;
+              
+Responsible for fixing a few bugs, equipping appropriate items on NPC’s when the time is
+right, adding &amp; removing NPC’s from the game world, and other stuff.</description>
+              <conditionFlags>
+                <flag name="require_11_animations">selected</flag>
+                <flag name="require_21_areas">selected</flag>
+                <flag name="require_24_conversations">selected</flag>
+                <flag name="require_25_scripts">selected</flag>
+              </conditionFlags>
+              <files>
+                <folder source="Improved Atmosphere/2. Modules/2.5. Scripts" destination="packages/core/override/Improved Atmosphere/2. Modules/2.5. Scripts"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+          </plugins>
+        </group>
+        <group name="2.6 Merchants" type="SelectAny">
+          <plugins order="Explicit">
+            <plugin name="Merchants">
+              <description>Requirements: 1.2 Materials, 1.3 Tints - Custom, 1.4 Items;
+              
+Responsible for fixing a few bugs, equipping appropriate items on NPC’s when the time is
+right, adding &amp; removing NPC’s from the game world, and other stuff.</description>
+              <conditionFlags>
+                <flag name="require_12_materials">selected</flag>
+                <flag name="require_13_tints_custom">selected</flag>
+                <flag name="require_14_items">selected</flag>
+              </conditionFlags>
+              <files>
+                <folder source="Improved Atmosphere/2. Modules/2.6. Merchants" destination="packages/core/override/Improved Atmosphere/2. Modules/2.6. Merchants"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+          </plugins>
+        </group>
+        <group name="2.7 Rewards" type="SelectAny">
+          <plugins order="Explicit">
+            <plugin name="Rewards">
+              <description>Requirements: 1.2 Materials, 1.3 Tints, 1.4 Items;
+              
+              Modifies a number of plot rewards.</description>
+              <conditionFlags>
+                <flag name="require_12_materials">selected</flag>
+                <flag name="require_13_tints_custom">selected</flag>
+                <flag name="require_14_items">selected</flag>
+              </conditionFlags>              
+              <files>
+                <folder source="Improved Atmosphere/2. Modules/2.7. Rewards" destination="packages/core/override/Improved Atmosphere/2. Modules/2.7. Rewards"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+          </plugins>
+        </group>
+      </optionalFileGroups>
+    </installStep>
+    <installStep name="3. PC Origins">
+      <optionalFileGroups order="Explicit">
+        <group name="3.1 PC Origins" type="SelectAny">
+          <plugins order="Explicit">
+            <plugin name="PC Origins">
+              <description>Requirements: 1.2 Materials, 1.3 Tints - Custom, 1.4 Items;
+              
+Files in these folders tweak each origin in a number of ways. I was not concerned about
+balance as much as I was about realism. So, yes, playing as a human or dwarf noble will
+make the beginning of the game easier (installing a difficulty mod is recommended), while
+playing as a commoner or a mage will make it harder (due to NPC’s wearing better
+unscaled equipment).</description>
+              <conditionFlags>
+                <flag name="require_12_materials">selected</flag>
+                <flag name="require_13_tints_custom">selected</flag>
+                <flag name="require_14_items">selected</flag>
+              </conditionFlags>
+              <files>
+                <folder source="Improved Atmosphere/3. PC Origins" destination="packages/core/override/Improved Atmosphere/3. PC Origins"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+          </plugins>
+        </group>                
+      </optionalFileGroups>
+    </installStep>
+    <installStep name="4. Companions">
+      <optionalFileGroups order="Explicit">
+        <group name="4.1 Dialog Changes" type="SelectAny">
+          <plugins order="Explicit">
+            <plugin name="Dialog Changes">
+              <description>Modifies companion approval gain and some of their conversations and/or comments . It
+also fixes some bugs in companion's dialogs.</description>
+              <files>
+                <folder source="Improved Atmosphere/4. Companions/4.1. Dialog Changes" destination="packages/core/override/Improved Atmosphere/4. Companions/4.1. Dialog Changes"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+          </plugins>
+        </group>  
+        <group name="4.2 Gear Changes" type="SelectAny">
+          <plugins order="Explicit">
+            <plugin name="Gear Changes">
+              <description>Requirements: 1.2 Materials, 1.3 Tints - Custom, 1.4 Items;
+              
+Modifies companion approval gain and some of their conversations and/or comments . It
+also fixes some bugs in companion's dialogs.</description>
+              <conditionFlags>
+                <flag name="require_12_materials">selected</flag>
+                <flag name="require_13_tints_custom">selected</flag>
+                <flag name="require_14_items">selected</flag>
+              </conditionFlags>
+              <files>
+                <folder source="Improved Atmosphere/4. Companions/4.2. Gear Changes" destination="packages/core/override/Improved Atmosphere/4. Companions/4.2. Gear Changes"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+          </plugins>
+        </group>                       
+      </optionalFileGroups>
+    </installStep>
+    <installStep name="5. Awakening Expansion">
+      <optionalFileGroups order="Explicit">
+        <group name="5.1 Areas" type="SelectAny">
+          <plugins order="Explicit">
+            <plugin name="Areas">
+              <description>Contains only two minor changes (thanks to no toolset available): in Amaranthine, fixes
+the Chanter's position, so that her feet do not clip through the nearby vase, and in The
+Wending Woods, replaces a generic baddie with a unique leader of the bandits.</description>
+              <files>
+                <folder source="Improved Atmosphere/5. Awakening Expansion/5.1. Areas" destination="packages/core/override/Improved Atmosphere/5. Awakening Expansion/5.1. Areas"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+          </plugins>
+        </group>  
+        <group name="5.2 Characters" type="SelectAny">
+          <plugins order="Explicit">
+            <plugin name="Characters">
+              <description>Requirements: 1.2 Materials, 1.3 Tints - Custom, 1.4 Items;
+              
+              Same deal as the "Origins part", but for Awakening.</description>
+              <conditionFlags>
+                <flag name="require_12_materials">selected</flag>
+                <flag name="require_13_tints_custom">selected</flag>
+                <flag name="require_14_items">selected</flag>
+              </conditionFlags>              
+              <files>
+                <folder source="Improved Atmosphere/5. Awakening Expansion/5.2. Characters" destination="packages/core/override/Improved Atmosphere/5. Awakening Expansion/5.2. Characters"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+          </plugins>
+        </group>
+        <group name="5.3 Companions" type="SelectAny">
+          <plugins order="Explicit">
+            <plugin name="Companions">
+              <description>Requirements: 1.2 Materials, 1.3 Tints, 1.4 Items;
+              
+Did you find it as annoying as I that most companions joined your party wearing an
+incomplete set of unique gear (for example, Justice has unique everything except for the
+boots)? If so, this is the module for you: each companion will now join your party wearing
+a full set of unique gear.</description>
+              <conditionFlags>
+                <flag name="require_12_materials">selected</flag>
+                <flag name="require_13_tints_custom">selected</flag>
+                <flag name="require_14_items">selected</flag>
+              </conditionFlags>
+              <files>
+                <folder source="Improved Atmosphere/5. Awakening Expansion/5.3. Companions" destination="packages/core/override/Improved Atmosphere/5. Awakening Expansion/5.3. Companions"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+          </plugins>
+        </group>
+        <group name="5.4 Merchants" type="SelectAny">
+          <plugins order="Explicit">
+            <plugin name="Merchants">
+              <description>Does the same as the "Origins part", but affects Awakening only.</description>
+              <files>
+                <folder source="Improved Atmosphere/5. Awakening Expansion/5.4. Merchants" destination="packages/core/override/Improved Atmosphere/5. Awakening Expansion/5.4. Merchants"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+          </plugins>
+        </group>  
+        <group name=" 5.5 Rewards" type="SelectAny">
+          <plugins order="Explicit">
+            <plugin name="Rewards">
+              <description>Requirements: 1.2 Materials, 1.3 Tints - Custom, 1.4 Items;
+              
+Modifies a small number of plot rewards.</description>
+              <conditionFlags>
+                <flag name="require_12_materials">selected</flag>
+                <flag name="require_13_tints_custom">selected</flag>
+                <flag name="require_14_items">selected</flag>
+              </conditionFlags>              
+              <files>
+                <folder source="Improved Atmosphere/5. Awakening Expansion/5.5. Rewards" destination="packages/core/override/Improved Atmosphere/5. Awakening Expansion/5.5. Rewards"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+          </plugins>
+        </group>                              
+      </optionalFileGroups>
+    </installStep>
+    <installStep name="6. Downloadable Content">
+      <optionalFileGroups order="Explicit">
+        <group name="6.1 Stone Prisoner" type="SelectAny">
+          <plugins order="Explicit">
+            <plugin name="Stone Prisoner">
+              <description>Requirements: 1.2 Materials, 1.3 Tints - Custom, 1.4 Items;
+              
+Includes character equipment and general changes.</description>
+              <conditionFlags>
+                <flag name="require_12_materials">selected</flag>
+                <flag name="require_13_tints_custom">selected</flag>
+                <flag name="require_14_items">selected</flag>
+              </conditionFlags>              
+              <files>
+                <folder source="Improved Atmosphere/6. Downloadable Content/6.1. Stone Prisoner" destination="packages/core/override/Improved Atmosphere/6. Downloadable Content/6.1. Stone Prisoner"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+          </plugins>
+        </group>
+        <group name="6.2 Warden's Keep" type="SelectAny">
+          <plugins order="Explicit">
+            <plugin name="Warden's Keep">
+              <description>Requirements: 1.2 Materials, 1.3 Tints, 1.4 Items;
+              
+Includes character equipment changes.</description>
+              <conditionFlags>
+                <flag name="require_12_materials">selected</flag>
+                <flag name="require_13_tints_custom">selected</flag>
+                <flag name="require_14_items">selected</flag>
+              </conditionFlags>              
+              <files>
+                <folder source="Improved Atmosphere/6. Downloadable Content/6.2. Warden's Keep" destination="packages/core/override/Improved Atmosphere/6. Downloadable Content/6.2. Warden's Keep"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+          </plugins>
+        </group>
+        <group name="6.3 Return to Ostagar" type="SelectAny">
+          <plugins order="Explicit">
+            <plugin name="Return to Ostagar">
+              <description>Requirements: 1.2 Materials, 1.3 Tints - Custom, 1.4 Items;
+              
+Includes some character equipment changes.</description>
+              <conditionFlags>
+                <flag name="require_12_materials">selected</flag>
+                <flag name="require_13_tints_custom">selected</flag>
+                <flag name="require_14_items">selected</flag>
+              </conditionFlags>              
+              <files>
+                <folder source="Improved Atmosphere/6. Downloadable Content/6.3. Return to Ostagar" destination="packages/core/override/Improved Atmosphere/6. Downloadable Content/6.3. Return to Ostagar"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+          </plugins>
+        </group>
+        <group name="6.4 Leliana's Song" type="SelectAny">
+          <plugins order="Explicit">
+            <plugin name="Leliana's Song">
+              <description>Requirements: 1.2 Materials, 1.3 Tints, 1.4 Items;
+              
+Includes character equipment changes.</description>
+              <conditionFlags>
+                <flag name="require_12_materials">selected</flag>
+                <flag name="require_13_tints_custom">selected</flag>
+                <flag name="require_14_items">selected</flag>
+              </conditionFlags>              
+              <files>
+                <folder source="Improved Atmosphere/6. Downloadable Content/6.4. Leliana's Song" destination="packages/core/override/Improved Atmosphere/6. Downloadable Content/6.4. Leliana's Song"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+          </plugins>
+        </group>
+        <group name="6.5 Golems of Amgarrak" type="SelectAny">
+          <plugins order="Explicit">
+            <plugin name="Golems of Amgarrak">
+              <description>Requirements: 1.2 Materials, 1.3 Tints - Custom, 1.4 Items;
+              
+Includes character equipment changes, as well as some general changes.</description>
+              <conditionFlags>
+                <flag name="require_12_materials">selected</flag>
+                <flag name="require_13_tints_custom">selected</flag>
+                <flag name="require_14_items">selected</flag>
+              </conditionFlags>              
+              <files>
+                <folder source="Improved Atmosphere/6. Downloadable Content/6.5. Golems of Amgarrak" destination="packages/core/override/Improved Atmosphere/6. Downloadable Content/6.5. Golems of Amgarrak"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+          </plugins>
+        </group>
+        <group name="6.6 Witch Hunt" type="SelectAny">
+          <plugins order="Explicit">
+            <plugin name="Witch Hunt">
+              <description>Requirements: 1.2 Materials, 1.3 Tints, 1.4 Items;
+              
+Includes character equipment and module changes, as well as some general changes.</description>
+              <conditionFlags>
+                <flag name="require_12_materials">selected</flag>
+                <flag name="require_13_tints_custom">selected</flag>
+                <flag name="require_14_items">selected</flag>
+              </conditionFlags>
+              <files>
+                <folder source="Improved Atmosphere/6. Downloadable Content/6.6. Witch Hunt" destination="packages/core/override/Improved Atmosphere/6. Downloadable Content/6.6. Witch Hunt"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+          </plugins>
+        </group>                           
+      </optionalFileGroups>
+    </installStep> 
+    <installStep name="7. Extras">
+      <optionalFileGroups order="Explicit">
+        <group name="7.1 Modified Item Properties" type="SelectAny">
+          <plugins order="Explicit">
+            <plugin name="Modified Item Properties">
+              <description>Requirements: 1.2 Materials, 1.3 Tints - Custom, 1.4 Items;
+              
+This will give many items more unique or appropriate properties and material, such as
+wooden staves being made of actual wood instead of metal. Most unique items (with the
+exception of those received at or near the start of the game) should now stand out enough
+to be useful throughout the entire game, depending on the enemies you face. The way it
+works in vanilla, once you get the best item of a certain type (sword, armor...), you have
+absolutely no reason to switch to any other item ever again. This modification aims to
+change that.
+
+In addition to changes done to combat items, the prices of many ingredients, potions, and
+explosives were brought down or up to a more realistic level.</description>
+              <conditionFlags>
+                <flag name="require_12_materials">selected</flag>
+                <flag name="require_13_tints_custom">selected</flag>
+                <flag name="require_14_items">selected</flag>
+              </conditionFlags>
+              <files>
+                <folder source="Improved Atmosphere/7. Extras/7.1. Modified Item Properties" destination="packages/core/override/Improved Atmosphere/7. Extras/7.1. Modified Item Properties"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+          </plugins>
+        </group>
+        <group name="7.2 Awakening Quick Items" type="SelectAny">
+          <plugins order="Explicit">
+            <plugin name="Awakening Quick Items">
+              <description>Requirements: 1.2 Materials, 1.3 Tints - Custom, 1.4 Items;
+              
+This will enrich your Origins experience with quick items (stamina potions and explosives),
+crafting ingredients, and recipes from Awakening. Stamina potions are especially useful if
+you happen to forget to bring a mage with you. You will find these items scattered across
+the game world. Defeated foes should sometimes drop a Stamina Draught. The rest of the
+items are available from various merchants—most of the explosives (traps, bombs, blade
+coatings) and their respective recipes will be sold by the Crows, while stamina potions as
+well as the recipes required to make them are sold by a large number of merchants who
+usually also sell health potions; keep your eyes peeled.</description>
+              <conditionFlags>
+                <flag name="require_12_materials">selected</flag>
+                <flag name="require_13_tints_custom">selected</flag>
+                <flag name="require_14_items">selected</flag>
+              </conditionFlags>
+              <files>
+                <folder source="Improved Atmosphere/7. Extras/7.2. Awakening Quick Items" destination="packages/core/override/Improved Atmosphere/7. Extras/7.2. Awakening Quick Items"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+          </plugins>
+        </group>
+        <group name="7.3 Optional Campaign Mods" type="SelectAny">
+          <plugins order="Explicit">
+            <plugin name="Alistair Climax Speech">
+              <description>If Alistair is on the throne but not in the party (because
+you spared Loghain), he will now deliver the pre-final battle speech in front of Denerim
+city gates instead of Anora. Why? Because Anora's screaming makes my ears bleed, and I
+reckon I'm not the only one.</description>
+              <files>
+                <folder source="Improved Atmosphere/7. Extras/7.3. Optional Campaign Mods/Alistair Climax Speech" destination="packages/core/override/Improved Atmosphere/7. Extras/7.3. Optional Campaign Mods/Alistair Climax Speech"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Cammen &amp; Gheyna Romances">
+              <description>Unlocks Cammen's and Gheyna's mini
+romance for both genders. It works well for the most part. There is only one instance where
+your PC is not correctly referred to, and it only happens if you're a male who slept with
+Cammen and then told Gheyna about it. When it comes to journal entries, I rewrote the
+ones that mentioned your PC's gender, so you don't have to worry about that.
+Additionally, the quest can now be completed by sleeping with both, and you will lose (or
+gain) no approval with the clan (makes sense since neither wants to talk about what
+happened).</description>
+              <files>
+                <folder source="Improved Atmosphere/7. Extras/7.3. Optional Campaign Mods/Cammen &amp; Gheyna Romances" destination="packages/core/override/Improved Atmosphere/7. Extras/7.3. Optional Campaign Mods/Cammen &amp; Gheyna Romances"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Release Jowan">
+              <description>This will make it possible to release Jowan even if you didn't
+already do so upon first meeting him. To do this, you have to tell Teagan you wish to
+execute Jowan yourself (I added a few extra lines for PC mages), and then, while speaking
+to Jowan, you will be presented with an option to let him go. The remainder of his quest
+then functions just as if you had released him when you first met him. Do note that once
+Eamon awakes, you will no longer have this option, so speak to Teagan about Jowan
+before you revive Eamon.</description>
+              <files>
+                <folder source="Improved Atmosphere/7. Extras/7.3. Optional Campaign Mods/Release Jowan" destination="packages/core/override/Improved Atmosphere/7. Extras/7.3. Optional Campaign Mods/Release Jowan"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Varathorn Special Store">
+              <description>Varathorn's special store (which includes unique and
+quite powerful items) will now only unlock if you complete his Ironbark quest and side
+with the elves (either by killing the Wares or letting Zathrian to sacrifice himself). In
+vanilla, it unlocks after you complete three main quests, regardless of whether Nature of
+the Beast is one of them or not. I feel this makes it a bit more realistic. I mean, why would
+he trade his best items with a complete stranger? For all he knows, these weapons could at
+some point be used against his clan.</description>
+              <files>
+                <folder source="Improved Atmosphere/7. Extras/7.3. Optional Campaign Mods/Varathron Special Store" destination="packages/core/override/Improved Atmosphere/7. Extras/7.3. Optional Campaign Mods/Varathron Special Store"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+          </plugins>
+        </group>
+        <group name="7.4 Bodies Stay" type="SelectAny">
+          <plugins order="Explicit">
+            <plugin name="Bodies Stay">
+              <description>The bodies of your victims will no longer fade away. Now you can loot the Ogre without
+having to fear that its body will disappear in front of your eyes.</description>
+              <files>
+                <file source="Improved Atmosphere/7. Extras/7.4. Bodies Stay/APR_base.GDA" destination="packages/core/override/Improved Atmosphere/7. Extras/7.4. Bodies Stay/APR_base.GDA"/>
+                <file source="Improved Atmosphere/7. Extras/7.4. Bodies Stay/APR_base_gwb.GDA" destination="packages/core/override/Improved Atmosphere/7. Extras/7.4. Bodies Stay/APR_base_gwb.GDA"/>
+                <file source="Improved Atmosphere/7. Extras/7.4. Bodies Stay/APR_gib.gda" destination="packages/core/override/Improved Atmosphere/7. Extras/7.4. Bodies Stay/APR_gib.gda"/>
+                <file source="Improved Atmosphere/7. Extras/7.4. Bodies Stay/APR_gxa.gda" destination="packages/core/override/Improved Atmosphere/7. Extras/7.4. Bodies Stay/APR_gxa.gda"/>
+                <file source="Improved Atmosphere/7. Extras/7.4. Bodies Stay/arl101cr_undead.utc" destination="packages/core/override/Improved Atmosphere/7. Extras/7.4. Bodies Stay/arl101cr_undead.utc"/>
+                <file source="Improved Atmosphere/7. Extras/7.4. Bodies Stay/cli400ar_city_gates.ncs" destination="packages/core/override/Improved Atmosphere/7. Extras/7.4. Bodies Stay/cli400ar_city_gates.ncs"/>
+                <file source="Improved Atmosphere/7. Extras/7.4. Bodies Stay/cli410ar_city_gates_defend.ncs" destination="packages/core/override/Improved Atmosphere/7. Extras/7.4. Bodies Stay/cli410ar_city_gates_defend.ncs"/>
+                <file source="Improved Atmosphere/7. Extras/7.4. Bodies Stay/cli600ar_elven_alienage.ncs" destination="packages/core/override/Improved Atmosphere/7. Extras/7.4. Bodies Stay/cli600ar_elven_alienage.ncs"/>
+                <file source="Improved Atmosphere/7. Extras/7.4. Bodies Stay/spell_deathmagic.ncs" destination="packages/core/override/Improved Atmosphere/7. Extras/7.4. Bodies Stay/spell_deathmagic.ncs"/>
+                <file source="Improved Atmosphere/7. Extras/7.4. Bodies Stay/spell_deathsyphon.ncs" destination="packages/core/override/Improved Atmosphere/7. Extras/7.4. Bodies Stay/spell_deathsyphon.ncs"/>
+                <file source="Improved Atmosphere/7. Extras/7.4. Bodies Stay/talent_devour.ncs" destination="packages/core/override/Improved Atmosphere/7. Extras/7.4. Bodies Stay/talent_devour.ncs"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Bodies Stay - No Bones">
+              <description>This will overwrite vanilla bone models with invisible placeables,
+which basically means bodies won't turn into bones after a little while anymore, but will
+instead disappear completely. While this is meant to be used in conjunction with "Bodies
+Stay" mod, there's nothing
+stopping you from using this as an independent mod. Be warned, though, that doing so
+will make looting decayed corpses harder (I suggest pushing the "highlight useable objects"
+button), since they'll be invisible.</description>
+              <files>
+                <folder source="Improved Atmosphere/7. Extras/7.4. Bodies Stay/No Bones" destination="packages/core/override/Improved Atmosphere/7. Extras/7.4. Bodies Stay/No Bones"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+          </plugins>
+        </group>
+        <group name="7.5 Weapon VFX Remover" type="SelectAny">
+          <plugins order="Explicit">
+            <plugin name="Weapon VFX Remover">
+              <description>This tiny file will remove the visual effects (cold, fire, electricity, spirit) from weapons and
+staffs enchanted with runes. Weapons enchanted with spells or oils are not affected.</description>
+              <files>
+                <folder source="Improved Atmosphere/7. Extras/7.5. Weapon VFX Remover" destination="packages/core/override/Improved Atmosphere/7. Extras/7.5. Weapon VFX Remover"/>
+              </files>
+              <typeDescriptor>
+                <type name="Recommended"/>
+              </typeDescriptor>
+            </plugin>
+          </plugins>
+        </group>                  
+      </optionalFileGroups>
+    </installStep>            
+  </installSteps>
+
+  <conditionalFileInstalls>
+    <patterns>
+      <pattern>
+        <dependencies operator="Or">
+            <flagDependency flag="require_11_animations" value="selected"/>
+        </dependencies>
+        <files>
+          <folder source="Improved Atmosphere/1. Global/1.1. Animations" destination="packages/core/override/Improved Atmosphere/1. Global/1.1. Animations"/>
+        </files>
+      </pattern>
+      <pattern>
+          <dependencies operator="Or">
+              <flagDependency flag="require_12_materials" value="selected"/>
+          </dependencies>
+          <files>
+            <folder source="Improved Atmosphere/1. Global/1.2. Materials/For Darkspawn Chronicles" destination="packages/core/override/Improved Atmosphere/1. Global/1.2. Materials/For Darkspawn Chronicles"/>
+            <folder source="Improved Atmosphere/1. Global/1.2. Materials/For Golems of Amgarrak" destination="packages/core/override/Improved Atmosphere/1. Global/1.2. Materials/For Golems of Amgarrak"/>
+            <folder source="Improved Atmosphere/1. Global/1.2. Materials/For Leliana's Song" destination="packages/core/override/Improved Atmosphere/1. Global/1.2. Materials/For Leliana's Song"/>
+            <folder source="Improved Atmosphere/1. Global/1.2. Materials/For Witch Hunt" destination="packages/core/override/Improved Atmosphere/1. Global/1.2. Materials/For Witch Hunt"/>
+            <file source="Improved Atmosphere/1. Global/1.2. Materials/New_Materials_AW.dazip" destination="New_Materials_AW.dazip.mo2unpack"/>
+            <file source="Improved Atmosphere/1. Global/1.2. Materials/New_Materials_OR.dazip" destination="New_Materials_OR.dazip.mo2unpack"/>
+          </files>
+      </pattern>
+      <pattern>
+          <dependencies operator="Or">
+              <flagDependency flag="require_13_tints_custom" value="selected"/>
+          </dependencies>
+          <files>
+            <folder source="Improved Atmosphere/1. Global/1.3. Tints/Custom" destination="packages/core/override/Improved Atmosphere/1. Global/1.3. Tints/Custom"/>
+            <file source="Improved Atmosphere/1. Global/1.3. Tints/tint_override.GDA" destination="packages/core/override/Improved Atmosphere/1. Global/1.3. Tints/tint_override.GDA"/>
+            <file source="Improved Atmosphere/1. Global/1.3. Tints/tint_override_IA.GDA" destination="packages/core/override/Improved Atmosphere/1. Global/1.3. Tints/tint_override_IA.GDA"/>
+          </files>
+      </pattern>
+      <pattern>
+          <dependencies operator="Or">
+              <flagDependency flag="require_14_items" value="selected"/>
+          </dependencies>
+          <files>
+            <folder source="Improved Atmosphere/1. Global/1.4. Items/Functions" destination="packages/core/override/Improved Atmosphere/1. Global/1.4. Items/Functions"/>
+            <folder source="Improved Atmosphere/1. Global/1.4. Items/Materials" destination="packages/core/override/Improved Atmosphere/1. Global/1.4. Items/Materials"/>
+            <folder source="Improved Atmosphere/1. Global/1.4. Items/UTI" destination="packages/core/override/Improved Atmosphere/1. Global/1.4. Items/UTI"/>
+          </files>
+      </pattern>
+      <pattern>
+          <dependencies operator="Or">
+              <flagDependency flag="require_21_areas" value="selected"/>
+          </dependencies>
+          <files>
+            <folder source="Improved Atmosphere/2. Modules/2.1. Areas" destination="packages/core/override/Improved Atmosphere/2. Modules/2.1. Areas"/>
+          </files>
+      </pattern>      
+      <pattern>
+          <dependencies operator="Or">
+              <flagDependency flag="require_24_conversations" value="selected"/>
+          </dependencies>
+          <files>
+            <folder source="Improved Atmosphere/2. Modules/2.4. Conversations" destination="packages/core/override/Improved Atmosphere/2. Modules/2.4. Conversations"/>
+          </files>
+      </pattern>
+      <pattern>
+          <dependencies operator="Or">
+              <flagDependency flag="require_25_scripts" value="selected"/>
+          </dependencies>
+          <files>
+            <folder source="Improved Atmosphere/2. Modules/2.5. Scripts" destination="packages/core/override/Improved Atmosphere/2. Modules/2.5. Scripts"/>
+          </files>
+      </pattern>
+    </patterns>
+  </conditionalFileInstalls>
+
+</config>
