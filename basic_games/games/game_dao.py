@@ -17,7 +17,7 @@ class DAOriginsGame(BasicGame):
 
     Name = "Dragon Age Origins Support Plugin"
     Author = "SturdyBuzzer"
-    Version = "2.9"
+    Version = "0.3.1"
 
     GameName = "Dragon Age: Origins"
     GameShortName = "dragonage"
@@ -123,6 +123,12 @@ class DAOriginsGame(BasicGame):
             f"<br><br>This improves MO2s conflict detection for override files."
             f"<br><br>(Must re-install mod to reverse this.)<br><br>"
         ),
+        "bucket_mode" : (
+            f"Requires the flatten_override setting to be True."
+            f"<br><br>Files will be placed in subfolders \"buckets\" based on the file extension."
+            f"<br><br>This makes it easier to view different types of mod files, eg items, animations, etc."
+            f"<br><br>(Must re-install mod to reverse this.)<br><br>"
+        ),
         "duplicate_warning" : (
             f"Used when flatten_override mode is active."
             f"<br><br>Detects duplicate files found in the mods override dir during install."
@@ -164,6 +170,11 @@ class DAOriginsGame(BasicGame):
             mobase.PluginSetting(
                 "flatten_override",
                 self._setting_descriptions["flatten_override"],
+                False,
+            ),
+            mobase.PluginSetting(
+                "bucket_mode",
+                self._setting_descriptions["bucket_mode"],
                 False,
             ),
             mobase.PluginSetting(
@@ -270,7 +281,10 @@ class DAOriginsGame(BasicGame):
         if setting == "deploy_bin_ship" and new:
             # Warn of potential clash with root builder
             self._rootbuilder_warning()
-        if setting == "flatten_override" and new:
+        if (
+            (setting == "flatten_override" and new) or 
+            (setting == "bucket_mode" and new and self._get_setting("flatten_override"))
+        ):
             if not DAOUtils.show_message_box(
                 f"Flatten packages/core/override?",
                 [
@@ -280,7 +294,8 @@ class DAOriginsGame(BasicGame):
                 cancel = True,
             ): return self._set_setting(setting, False)
             mods_path = self._organizer.modsPath()
-            DAOInstall.flatten_override_dir_all_mods(mods_path)         
+            bucket = bool(self._get_setting("bucket_mode"))
+            DAOInstall.flatten_override_dir_all_mods(mods_path, bucket)         
         
     ## If download file is .dazip, rename to .zip ##
     def _handle_downloadComplete(self, download_id: int) -> None:
@@ -311,7 +326,8 @@ class DAOriginsGame(BasicGame):
             return
         if not self._get_setting("flatten_override"):
             return
-        if not DAOInstall.flatten_override_dir(mod_dir):
+        bucket = bool(self._get_setting("bucket_mode"))
+        if not DAOInstall.flatten_override_dir(mod_dir, bucket):
             DAOInstall.warn_install_failed(mod_name)
 
     # On game launch:

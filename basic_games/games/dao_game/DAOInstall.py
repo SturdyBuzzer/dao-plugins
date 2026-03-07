@@ -67,7 +67,7 @@ class DAOInstall:
         return result
         
     @staticmethod
-    def flatten_override_dir(mod_dir: str) -> bool:
+    def flatten_override_dir(mod_dir: str, bucket: bool) -> bool:
         """Flattens override dir (or moves each file to subdirs based on file suffix)."""
         ovrds_path = DAOUtils.os_path(mod_dir, "packages/core/override")
         if not os.path.isdir(ovrds_path):
@@ -75,9 +75,10 @@ class DAOInstall:
         path_dict: dict[str, str] = {}
         for root, _, files in os.walk(ovrds_path):
             for file in files:
+                ext = file.rsplit(".", 1)[1] if bucket else ""
                 rel_path = os.path.relpath(root, ovrds_path)
                 src = DAOUtils.os_path(ovrds_path, rel_path, file)
-                dst = DAOUtils.os_path(ovrds_path, file)
+                dst = DAOUtils.os_path(ovrds_path, ext, file)
                 if src == dst:
                     continue
                 path_dict[src] = dst
@@ -89,13 +90,13 @@ class DAOInstall:
         return DAOUtils.remove_empty_subdirs(ovrds_path)
 
     @staticmethod
-    def flatten_override_dir_all_mods(mods_path: str) -> bool:
+    def flatten_override_dir_all_mods(mods_path: str, bucket: bool) -> bool:
         """Calls flatten_override_dir for all installed mods"""
         if not os.path.isdir(mods_path):
             return False 
         for entry in os.listdir(mods_path):
             mod_dir = DAOUtils.os_path(mods_path, entry)
-            if not DAOInstall.flatten_override_dir(mod_dir):
+            if not DAOInstall.flatten_override_dir(mod_dir, bucket):
                 return False
             DAOUtils.log_message(f"Flattened override for mod : {entry}.")
         return True
