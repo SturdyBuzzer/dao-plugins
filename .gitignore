@@ -8,6 +8,10 @@ basic_games/games/*
 !basic_games/games/game_dao.py
 !basic_games/games/dao_game/
 !basic_games/games/dao_game/*.*
+!basic_games/games/dao_game/7za/
+!basic_games/games/dao_game/7za/7za_license.txt
+!basic_games/games/dao_game/7za/7za.exe
+!basic_games/games/dao_game/7za/
 !basic_games/games/dao_game/DAO_FOMOD/
 !basic_games/games/dao_game/DAO_FOMOD/*
 !basic_games/games/dao_game/DAO_FOMOD/*/checksum

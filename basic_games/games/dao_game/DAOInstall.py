@@ -391,17 +391,17 @@ class DAOInstall:
         checksum = DAOUtils.read_file(f"{script_dir}/checksum")
         if not DAOUtils.validate_checksum(path, checksum):
             return True
-        DAOUtils.log_message(f"Adding FOMOD script to: {name}")
+        DAOUtils.log_message(f"Adding FOMOD script to: {name}.")
         if DAOInstall.repackage_with_fomod(path, script_dir):
             DAOUtils.log_message(f"Done.")
             return True
-        DAOUtils.log_message(f"C'est un désastre, non?")
+        DAOUtils.log_message(f"Failed to add FOMOD script to: {name}.")
         return False
 
     @staticmethod
     def repackage_with_fomod(path: str, script_dir: str) -> bool:
         """Repackage archive with FOMOD scripts inside"""
-        # Extract  
+        # Extract
         parent = os.path.dirname(path)
         temp = DAOUtils.os_path(parent, "temp")
         fomod = DAOUtils.os_path(temp, "fomod")
@@ -413,7 +413,7 @@ class DAOInstall:
         config = DAOUtils.os_path(script_dir, "ModuleConfig.xml")
         if not (DAOUtils.copy_file(info, fomod) and DAOUtils.copy_file(config, fomod)):
             DAOUtils.remove_dir(temp)
-            return False        
+            return False
         # Re-zip
         if DAOUtils.create_archive(temp, path, True):
             return DAOInstall.convert_to_zip(path)

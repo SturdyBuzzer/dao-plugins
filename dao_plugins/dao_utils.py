@@ -7,8 +7,8 @@ import struct
 import xml.dom.minidom
 import zipfile
 
-from PyQt6.QtCore import qInfo, Qt
-from PyQt6.QtWidgets import QMessageBox, QProgressDialog
+from PyQt6.QtCore import qInfo, Qt, QProcess, QEventLoop
+from PyQt6.QtWidgets import QMessageBox, QProgressDialog, QApplication
 from typing import Iterable
 from xml.etree import ElementTree as ET
 
@@ -16,6 +16,8 @@ from xml.etree import ElementTree as ET
 ### Helper Utils ###
 ####################
 class DAOUtils:
+
+    DAO_7ZA_PATH = r"plugins\basic_games\games\dao_game\\7za\\7za.exe"
 
     @staticmethod
     def setup_utils(organizer: mobase.IOrganizer, name: str):
@@ -119,29 +121,60 @@ class DAOUtils:
             return False
         return True   
 
-    @staticmethod 
+    @staticmethod
     def create_archive(src: str, dst: str, delete: bool = True) -> bool:
-        """Create an archive from the contents of src and save it to dst. Optionally delete the original files."""
+        """Create a zip archive from src and save it to dst."""
         if not os.path.isdir(src):
             DAOUtils.log_message(f"Source directory not found: {src}.")
             return False
+
         try:
+            file_list: list[str] = []
+            for root, _, files in os.walk(src):
+                for f in files:
+                    file_list.append(os.path.join(root, f))
+
+            total = len(file_list)
+
+            progress = QProgressDialog(f"Creating {os.path.basename(dst)}", None, 0, total)
+            progress.setWindowModality(Qt.WindowModality.ApplicationModal)
+            progress.setAutoClose(True)
+            progress.setMinimumDuration(250)
+            progress.setValue(0)
+            progress.show()
+            QApplication.processEvents()
+
             with zipfile.ZipFile(dst, "w", zipfile.ZIP_DEFLATED) as zip_ref:
-                for root, _, files in os.walk(src):
-                    for file in files:
-                        file_path = os.path.join(root, file)
-                        arcname = os.path.relpath(file_path, src)
-                        zip_ref.write(file_path, arcname)
+                for i, file_path in enumerate(file_list, 1):
+                    arcname = os.path.relpath(file_path, src)
+                    zip_ref.write(file_path, arcname)
+
+                    progress.setValue(i)
+                    QApplication.processEvents()
+
         except Exception as e:
             DAOUtils.log_message(f"Failed to create archive {dst} from {src}: {e}.")
             return False
-        return DAOUtils.remove_dir(src) if delete else True
-                  
+
+        return DAOUtils.remove_dir(src) if delete else True 
+    
     @staticmethod 
     def extract_archive(src: str, dst: str, delete: bool = True) -> bool:
         """Extract archive at src to dst. Optionally delete the original archive."""
         if not DAOUtils.make_dirs(dst):
             return False
+        ext = os.path.splitext(src)[1].lower()
+        if ext == ".zip":
+            res = DAOUtils.extract_archive_zip(src, dst)
+        else:
+            res = DAOUtils.extract_archive_7z(src, dst)
+        if not res:
+            return False   
+        return DAOUtils.remove_file(src) if delete else True    
+
+    @staticmethod 
+    def extract_archive_zip(src: str, dst: str) -> bool:
+        """Extract zip archive at src to dst."""
         try:
             with zipfile.ZipFile(src, "r") as zip_ref:
                 members = zip_ref.infolist()
@@ -159,7 +192,74 @@ class DAOUtils:
         except Exception as e:
             DAOUtils.log_message(f"Failed to extract archive {src} to {dst}: {e}.")
             return False
-        return DAOUtils.remove_file(src) if delete else True
+        return True
+    
+    @staticmethod
+    def extract_archive_7z(src: str, dst: str) -> bool:
+        """Extract 7z archive at src to dst."""
+        sevenza = DAOUtils.DAO_7ZA_PATH
+        if not DAOUtils.file_exists(sevenza):
+            DAOUtils.log_message(f"Failed to extract archive {src}: 7za.exe not found at {sevenza}")
+            return False
+
+        try:
+            args = [
+                "x", "-y",
+                "-bb0", "-bso0", "-bsp0", "-bd",
+                f"-o{dst}",
+                src,
+            ]
+
+            progress = QProgressDialog(f"Extracting {os.path.basename(src)}", None, 0, 0)
+            progress.setWindowModality(Qt.WindowModality.ApplicationModal)
+            progress.setAutoClose(False)
+            progress.setMinimumDuration(250)
+
+            proc = QProcess()
+            proc.setProgram(sevenza)
+            proc.setArguments(args)
+            proc.setProcessChannelMode(QProcess.ProcessChannelMode.SeparateChannels)
+
+            stderr_buf: list[str] = []
+            def _read_stderr():
+                stderr_buf.append(
+                    proc.readAllStandardError().data().decode("utf-8", "replace")
+                )
+            proc.readyReadStandardError.connect(_read_stderr)
+
+            loop = QEventLoop()
+            proc.finished.connect(lambda *_: loop.quit())
+            proc.errorOccurred.connect(lambda *_: loop.quit())
+
+            progress.show()
+            QApplication.processEvents()
+
+            proc.start()
+
+            if not proc.waitForStarted(3000):
+                progress.close()
+                DAOUtils.log_message(
+                    f"Failed to start 7za for {src}. Program={sevenza} Args={args}"
+                )
+                return False
+
+            loop.exec()  # keeps UI responsive while waiting
+
+            progress.close()
+            QApplication.processEvents()
+
+            if proc.exitStatus() != QProcess.ExitStatus.NormalExit or proc.exitCode() != 0:
+                DAOUtils.log_message(
+                    f"7za extraction failed (code={proc.exitCode()}) for {src}\n"
+                    f"Stderr:\n{''.join(stderr_buf)}"
+                )
+                return False
+
+            return True
+
+        except Exception as e:
+            DAOUtils.log_message(f"Failed to extract (7za) {src} to {dst}: {e}.")
+            return False
 
     @staticmethod
     def file_exists(file_path: str) -> bool:
