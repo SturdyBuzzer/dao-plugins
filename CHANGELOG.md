@@ -1,4 +1,10 @@
 # Changelog
+## v0.3.0
+- Now includes 7zip binary for .7z package support
+- FOMOD script framework added
+- Added FOMOD scripts for Dain's Fixes and Improved Atmosphere
+- Fixes: Add more core folders to data checker allowlist
+
 ## v0.2.9
 - Improved the file sorting logic to be more in line with how DAO does it.
 - Conflict checker - can now filter columns by text

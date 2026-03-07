@@ -32,6 +32,14 @@
 * Auto-sorting and management for Overrides, Docs, Binaries, etc.
 * Warns of duplicates in mods override dir
 
+### FOMOD script framework
+
+* Allows to add FOMOD scripts for certain nexus mods
+* On download, it unpackages mod, injects FOMOD script, and repackages mod.
+* So far includes scripts for:
+* `Dain's Fixes`
+* `Improved Atmosphere`
+
 ### Dynamic `Addins.xml` and `Offers.xml` Generation
 
 *(Settings → Plugins → Dragon Age Origins Support Plugin → `build_addins_offers_xml`)*
