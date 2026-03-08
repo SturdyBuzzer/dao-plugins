@@ -87,7 +87,7 @@
    * Auto flattens all sub-directories in `packages\core\override`.
    * Select your desired override files at the install mods dialog then click "ok" to auto-flatten.
    * Enables full conflict detection and priority handling via MO2.
-   * Optional "bucke" mode to split files into subfolders based on file extension.
+   * Optional "bucket" mode to split files into subfolders based on file extension.
 
 ### Save Game Management
 

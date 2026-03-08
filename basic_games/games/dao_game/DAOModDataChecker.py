@@ -18,7 +18,6 @@ class DAOModDataChecker(mobase.ModDataChecker):
             filetree = parent
         #Skip checks for already installed files
         elif filetree.name():
-            DAOUtils.log_message(f"Skipping: {filetree.name()}")
             return mobase.ModDataChecker.VALID        
         #Check if fixable
         if DAOModDataChecker.is_data_fixable(filetree): 
