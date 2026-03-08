@@ -11,13 +11,15 @@ class DAOModDataChecker(mobase.ModDataChecker):
         super().__init__()
         DAOModDataChecker._organizer = organizer
 
-    def dataLooksValid(self, filetree: mobase.IFileTree) -> mobase.ModDataChecker.CheckReturn:    
-        #Fix: Single root folders getting traversed by Simple Installer:
+    def dataLooksValid(self, filetree: mobase.IFileTree) -> mobase.ModDataChecker.CheckReturn:   
         parent = filetree.parent()
-        filetree = parent if parent else filetree
+        #Fix: Single root folders getting traversed by Simple Installer:
+        if parent:
+            filetree = parent
         #Skip checks for already installed files
-        if filetree.name():
-            return mobase.ModDataChecker.VALID
+        elif filetree.name():
+            DAOUtils.log_message(f"Skipping: {filetree.name()}")
+            return mobase.ModDataChecker.VALID        
         #Check if fixable
         if DAOModDataChecker.is_data_fixable(filetree): 
             return mobase.ModDataChecker.FIXABLE
@@ -35,7 +37,7 @@ class DAOModDataChecker(mobase.ModDataChecker):
         return filetree 
        
     _dir_list = (
-        "addins", "bin_ship", "docs", "logs", "modules", "mo2unpack", "offers", 
+        "addins", "bin_ship", "characters", "docs", "logs", "modules", "mo2unpack", "offers", 
         "packages/core_ep1","packages/core/data", "packages/core/override", "settings" 
         )
     

@@ -17,7 +17,7 @@ class DAOriginsGame(BasicGame):
 
     Name = "Dragon Age Origins Support Plugin"
     Author = "SturdyBuzzer"
-    Version = "0.3.1"
+    Version = "0.3.2"
 
     GameName = "Dragon Age: Origins"
     GameShortName = "dragonage"

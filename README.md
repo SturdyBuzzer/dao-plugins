@@ -74,18 +74,20 @@
 ### Configurable Override Modes
 
 *(Settings → Plugins → Dragon Age Origins Support Plugin → `flatten_override`)*
+*(Settings → Plugins → Dragon Age Origins Support Plugin → `bucket_mode`)*
 
-1. **Flatten Override (default):**
-
-   * Auto flattens all sub-directories in `packages\core\override`.
-   * Select your desired override files at the install mods dialog then click "ok" to auto-flatten.
-   * Enables full conflict detection and priority handling via MO2.
-
-2. **Old-school:**
+1. **Old-school (default):**
 
    * Keeps `packages\core\override` directory structure intact.
    * Manual conflict resolution by alphabetical order (e.g., `zzz_myFavoritemod...`).
    * For those who like it the *old fashioned* way.
+
+2. **Flatten Override:**
+
+   * Auto flattens all sub-directories in `packages\core\override`.
+   * Select your desired override files at the install mods dialog then click "ok" to auto-flatten.
+   * Enables full conflict detection and priority handling via MO2.
+   * Optional "bucke" mode to split files into subfolders based on file extension.
 
 ### Save Game Management
 

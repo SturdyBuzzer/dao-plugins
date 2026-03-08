@@ -1,4 +1,12 @@
 # Changelog
+
+## v0.3.2
+- More minor fixes
+- Added "bucket_mode" for override folder
+
+## v0.3.1
+- Minor hotfix
+
 ## v0.3.0
 - Now includes 7zip binary for .7z package support
 - FOMOD script framework added
