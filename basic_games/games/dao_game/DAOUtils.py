@@ -163,13 +163,10 @@ class DAOUtils:
         """Extract archive at src to dst. Optionally delete the original archive."""
         if not DAOUtils.make_dirs(dst):
             return False
-        ext = os.path.splitext(src)[1].lower()
-        if ext == ".zip":
-            res = DAOUtils.extract_archive_zip(src, dst)
-        else:
-            res = DAOUtils.extract_archive_7z(src, dst)
-        if not res:
-            return False   
+        if not DAOUtils.extract_archive_zip(src, dst):
+            DAOUtils.log_message(f"Trying with 7za.exe...")
+            if not DAOUtils.extract_archive_7z(src, dst):
+                return False
         return DAOUtils.remove_file(src) if delete else True    
 
     @staticmethod 
