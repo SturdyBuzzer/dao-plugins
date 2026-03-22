@@ -86,6 +86,8 @@ class DAOUtils:
         if not DAOUtils.make_dirs(dir):
             return False
         try:
+            src = DAOUtils.long_path(src) or src
+            dst = DAOUtils.long_path(dst) or dst
             shutil.copy2(src, dst)
             return True 
         except Exception as e:
@@ -99,7 +101,7 @@ class DAOUtils:
             return False
         dst = f"{src}.mohidden"
         return DAOUtils.copy_file(src, dst)
-   
+
     @staticmethod
     def create_link(target: str, link: str, force: bool) -> bool:
         """"Link src file to dst."""
@@ -119,7 +121,7 @@ class DAOUtils:
         except Exception as e:
             DAOUtils.log_message(f"Failed to create symlink {link} -> {target}: {e}.")
             return False
-        return True   
+        return True
 
     @staticmethod
     def create_archive(src: str, dst: str, delete: bool = True) -> bool:
@@ -163,13 +165,10 @@ class DAOUtils:
         """Extract archive at src to dst. Optionally delete the original archive."""
         if not DAOUtils.make_dirs(dst):
             return False
-        ext = os.path.splitext(src)[1].lower()
-        if ext == ".zip":
-            res = DAOUtils.extract_archive_zip(src, dst)
-        else:
-            res = DAOUtils.extract_archive_7z(src, dst)
-        if not res:
-            return False   
+        if not DAOUtils.extract_archive_zip(src, dst):
+            DAOUtils.log_message(f"Trying with 7za.exe...")
+            if not DAOUtils.extract_archive_7z(src, dst):
+                return False
         return DAOUtils.remove_file(src) if delete else True    
 
     @staticmethod 
@@ -273,7 +272,7 @@ class DAOUtils:
         base, ext = path.rsplit(".", 1)
         name = os.path.basename(base)
         return [name, ext]
-    
+
     @staticmethod
     def get_rel_path(path: str, base: str) -> str | None:
         "Get a string path relative to the base path"
@@ -299,6 +298,17 @@ class DAOUtils:
                 file_list.add(file_path)
         return file_list    
 
+    @staticmethod
+    def long_path(path: str) -> str | None:
+        """Convert path to Windows long-path form."""
+        try:
+            path = os.path.abspath(path)
+            if os.name == "nt" and not path.startswith("\\\\?\\"):
+                return "\\\\?\\" + path
+        except Exception as e:
+            DAOUtils.log_message(f"Failed to convert long path: {path}: {e}.")
+            return None
+
     @staticmethod 
     def make_dirs(path: str) -> bool:
         """"Create dir at specified path."""
@@ -313,6 +323,8 @@ class DAOUtils:
     def move_file(src: str, dst: str) -> bool:
         """"Move src file to dst."""
         try:
+            src = DAOUtils.long_path(src) or src
+            dst = DAOUtils.long_path(dst) or dst
             shutil.move(src, dst)
             return True
         except Exception as e:
@@ -365,7 +377,7 @@ class DAOUtils:
                 out.append((0, int(t)))
             else:
                 out.append((1, t.casefold()))
-        return out   
+        return out
     
     @staticmethod 
     def os_path(*parts: str) -> str:
@@ -408,6 +420,7 @@ class DAOUtils:
         if not os.path.isdir(dir_path):
             return True
         try:
+            dir_path = DAOUtils.long_path(dir_path) or dir_path
             shutil.rmtree(dir_path)
             return True
         except Exception as e:
@@ -450,7 +463,7 @@ class DAOUtils:
             DAOUtils.log_message(f"Failed to remove link {link}: {e}.")
             return False
         return True
-    
+
     @staticmethod 
     def restore_backup(dst: str) -> bool:
         src = f"{dst}.mohidden"
@@ -527,7 +540,7 @@ class DAOUtils:
         except Exception as e:
             DAOUtils.log_message(f"Failed to parse xml: {e}")
             return "".encode('utf-8')
-    
+
     @staticmethod
     def overwrite_element(old_elem: ET.Element, new_elem: ET.Element) -> bool:
         """Fully overwrite an ElementTree element in-place."""
@@ -555,7 +568,7 @@ class DAOUtils:
             return tree.getroot()
         except Exception as e:
             DAOUtils.log_message(f"Failed to read xml file {file_path}: {e}")
-            return None    
+            return None
 
     #################
     ## Misc. Utils ##
