@@ -269,7 +269,10 @@ class DAOUtils:
     
     @staticmethod 
     def get_info(path: str) -> list[str]:
-        base, ext = path.rsplit(".", 1)
+        if "." in path:
+            base, ext = path, ""
+        else:
+            base, ext = path.rsplit(".", 1)
         name = os.path.basename(base)
         return [name, ext]
 

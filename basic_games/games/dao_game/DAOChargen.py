@@ -246,8 +246,8 @@ class DAOChargen:
     @staticmethod
     def add_resource(chargenmorph: ET.Element, file_name: str, resource_type: str) -> None:
         """Create resource element and add to resource block"""
-        if not resource_type == "heads":
-           file_name = file_name.rsplit(".", 1)[0]
+        if "." in file_name and resource_type != "heads":
+            file_name = file_name.rsplit(".", 1)[0]
 
         if resource_type == "hairs":
             attrib = {"name" : file_name, "cut" : "1"}

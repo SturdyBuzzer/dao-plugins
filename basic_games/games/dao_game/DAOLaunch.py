@@ -320,6 +320,8 @@ class DAOLaunch:
             if entry.isDir():
                 continue
             name = entry.name().casefold()
+            if "." not in name:
+                continue
             base_name, ext = name.rsplit(".", 1)
             if name in visited or ext not in {"mop", "mmh", "tnt", "dds"}:
                 continue    

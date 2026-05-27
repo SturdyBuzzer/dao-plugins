@@ -74,8 +74,10 @@ class DAOInstall:
             return True
         path_dict: dict[str, str] = {}
         for root, _, files in os.walk(ovrds_path):
-            for file in files:
-                ext = file.rsplit(".", 1)[1] if bucket else ""
+            for file in files:                
+                ext = ""
+                if bucket and "." in file:
+                    ext = file.rsplit(".", 1)[1]
                 rel_path = os.path.relpath(root, ovrds_path)
                 src = DAOUtils.os_path(ovrds_path, rel_path, file)
                 dst = DAOUtils.os_path(ovrds_path, ext, file)

@@ -17,7 +17,7 @@ class DAOriginsGame(BasicGame):
 
     Name = "Dragon Age Origins Support Plugin"
     Author = "SturdyBuzzer"
-    Version = "0.3.2"
+    Version = "0.3.3"
 
     GameName = "Dragon Age: Origins"
     GameShortName = "dragonage"
@@ -448,9 +448,9 @@ class DAOriginsGame(BasicGame):
     def _is_game_triggered(self, app_path: str) -> bool:
         """Check if triggered process is the game."""
         game_dir = self.gameDirectory().absolutePath()
-        game_bin = DAOUtils.os_path(game_dir,self.binaryName())
-        launcher_bin = DAOUtils.os_path(game_dir,self.getLauncherName())
-        return DAOUtils.os_path(app_path) in {game_bin, launcher_bin}
+        game_bin = DAOUtils.os_path_casefold(game_dir, self.binaryName())
+        launcher_bin = DAOUtils.os_path_casefold(game_dir, self.getLauncherName())
+        return DAOUtils.os_path_casefold(app_path) in {game_bin, launcher_bin}
     
     def _rootbuilder_warning(self):
         """Warn of potential clash with root builder"""
