@@ -799,7 +799,7 @@ class DAODLCManager(mobase.IPluginTool):
                 # Copy files
                 if self._copy_files_to_dlc_fix(
                     mod_path, "data", mod_fix_path, "",
-                    name_transform = lambda file: f"{(parts := file.rsplit('.', 1))[0]}_fix.{parts[1]}"
+                    name_transform = lambda file: f"{os.path.splitext(file)[0]}_fix{os.path.splitext(file)[1]}"
                 ):
                     if self._copy_files_to_dlc_fix(
                         mod_path, "data/talktables", mod_fix_path, "talktables",

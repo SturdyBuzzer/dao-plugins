@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.3.3
+- Bug fixes:
+- Made game launch detection not case sensitive
+- Added fix for bucket mode and build_chargenmorphcfg_xml checking file ending on files with no ending.
+
 ## v0.3.2
 - More minor fixes
 - Added "bucket_mode" for override folder
